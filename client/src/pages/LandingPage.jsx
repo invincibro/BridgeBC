@@ -1,29 +1,35 @@
-// LandingPage introduces the product and lets users explore open roles.
+// LandingPage introduces the product and lets users explore open volunteer tasks.
 import { useEffect, useMemo, useState } from 'react'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import { getRoles } from '../services/api.js'
+import { getTasks } from '../services/api.js'
 
 function LandingPage() {
-  const [roles, setRoles] = useState([])
+  const [tasks, setTasks] = useState([])
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
 
   useEffect(() => {
-    getRoles()
-      .then(setRoles)
-      .catch(() => setError('Unable to load roles right now.'))
+    getTasks()
+      .then(setTasks)
+      .catch(() => setError('Unable to load tasks right now.'))
   }, [])
 
-  const filteredRoles = useMemo(() => {
+  const filteredTasks = useMemo(() => {
     const query = search.toLowerCase()
 
-    return roles.filter((role) => {
-      const fields = [role.title, role.nonprofit, role.location, role.commitment]
+    return tasks.filter((task) => {
+      const fields = [
+        task.task_title,
+        task.organization?.org_name || '',
+        task.organization?.city || '',
+        task.availability_needed,
+        task.task_category,
+      ]
       return fields.some((field) => field.toLowerCase().includes(query))
     })
-  }, [roles, search])
+  }, [tasks, search])
 
   return (
     <>
@@ -35,8 +41,8 @@ function LandingPage() {
               Make it easier for nonprofits to find help and keep momentum when volunteers change.
             </h1>
             <p className="mt-5 max-w-2xl text-lg text-slate-700">
-              BridgeBC matches volunteers to community roles and captures handoff notes so
-              programs keep moving, even when someone steps away.
+              BridgeBC matches volunteers to community tasks and captures handoff notes so programs
+              keep moving, even when someone steps away.
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
@@ -44,48 +50,50 @@ function LandingPage() {
                 <p>Volunteer turnover leaves nonprofits scrambling to preserve context and coverage.</p>
               </Card>
               <Card title="Value">
-                <p>Short-term and ongoing roles are easier to fill with clearer fit signals and handoff support.</p>
+                <p>Short-term and ongoing tasks are easier to fill with clearer fit signals and handoff support.</p>
               </Card>
               <Card title="Outcome">
-                <p>Nonprofits can post needs, review matches, and keep continuity notes in one workflow.</p>
+                <p>Nonprofits can create profiles, post tasks, review matches, and keep continuity notes in one workflow.</p>
               </Card>
             </div>
           </div>
 
           <Card
-            title="Search roles"
-            subtitle="Browse current opportunities from the mock API."
+            title="Search tasks"
+            subtitle="Browse current volunteer needs from the mock API."
             className="self-start"
           >
-            <label className="text-sm font-medium text-slate-600" htmlFor="role-search">
-              Search by title, nonprofit, commitment, or location
+            <label className="text-sm font-medium text-slate-600" htmlFor="task-search">
+              Search by task, organization, category, or city
             </label>
             <input
-              id="role-search"
+              id="task-search"
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Try outreach, remote, or weekly"
+              placeholder="Try mentorship, Burnaby, or Saturday"
               className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-moss"
             />
 
             <div className="mt-5 space-y-3">
               {error && <p className="text-sm text-orange-700">{error}</p>}
               {!error &&
-                filteredRoles.slice(0, 4).map((role) => (
-                  <div key={role.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
+                filteredTasks.slice(0, 4).map((task) => (
+                  <div key={task.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-pine">{role.title}</p>
+                        <p className="font-semibold text-pine">{task.task_title}</p>
                         <p className="text-sm text-slate-600">
-                          {role.nonprofit} • {role.location}
+                          {task.organization?.org_name} • {task.organization?.city}
                         </p>
                       </div>
-                      <Badge tone={role.urgency === 'High' ? 'danger' : 'warning'}>
-                        {role.urgency} urgency
+                      <Badge tone={task.urgency === 'High' || task.urgency === 'Critical' ? 'danger' : 'warning'}>
+                        {task.urgency} urgency
                       </Badge>
                     </div>
-                    <p className="mt-3 text-sm">{role.commitment}</p>
+                    <p className="mt-3 text-sm">
+                      {task.task_category} • {task.availability_needed}
+                    </p>
                   </div>
                 ))}
             </div>
@@ -97,11 +105,11 @@ function LandingPage() {
         <Card title="Short-term support">
           <p>Surface immediate volunteer needs without losing track of what happens after a placement.</p>
         </Card>
-        <Card title="Ongoing roles">
+        <Card title="Ongoing tasks">
           <p>Highlight recurring commitments where trust, handoff, and language fit matter most.</p>
         </Card>
         <Card title="Continuity-first">
-          <p>Pair role matching with notes, next steps, and key contacts to reduce program disruption.</p>
+          <p>Pair task matching with notes, next steps, and key contacts to reduce program disruption.</p>
         </Card>
       </section>
 
@@ -109,7 +117,7 @@ function LandingPage() {
         <SectionHeader
           eyebrow="Why this matters"
           title="A demo-ready MVP focused on continuity, not just matching."
-          description="The first version of BridgeBC shows how roles, volunteer fit, and handoff notes can work together in a simple workflow."
+          description="The first version of BridgeBC shows how tasks, volunteer fit, and handoff notes can work together in a simple workflow."
         />
       </section>
     </>

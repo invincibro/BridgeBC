@@ -34,7 +34,7 @@ function VolunteerProfilePage() {
       <SectionHeader
         eyebrow="Volunteer profile"
         title={volunteer.name}
-        description={`${volunteer.location} • ${volunteer.status}`}
+        description={`${volunteer.neighbourhood} • ${volunteer.background_check_status}`}
       />
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
@@ -58,7 +58,19 @@ function VolunteerProfilePage() {
             </div>
             <div>
               <p className="font-medium text-slate-500">Languages</p>
-              <p className="mt-2">{volunteer.languages.join(', ')}</p>
+              <p className="mt-2">{volunteer.languages_spoken.join(', ')}</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Hours available</p>
+              <p className="mt-2">{volunteer.hours_available_per_month} per month</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Experience level</p>
+              <p className="mt-2">{volunteer.experience_level}</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Vehicle</p>
+              <p className="mt-2">{volunteer.has_vehicle ? 'Yes' : 'No'}</p>
             </div>
           </div>
         </Card>
