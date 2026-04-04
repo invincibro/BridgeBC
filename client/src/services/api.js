@@ -11,8 +11,45 @@ async function fetchJson(path) {
   return response.json()
 }
 
-export function getRoles() {
-  return fetchJson('/roles')
+async function postJson(path, body) {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  if (!response.ok) {
+    let message = `Request failed with status ${response.status}`
+
+    try {
+      const payload = await response.json()
+      message = payload.message || message
+    } catch {
+      // Keep the status-based fallback message.
+    }
+
+    throw new Error(message)
+  }
+
+  return response.json()
+}
+
+export function getOrganizations() {
+  return fetchJson('/organizations')
+}
+
+export function createOrganization(payload) {
+  return postJson('/organizations', payload)
+}
+
+export function getTasks() {
+  return fetchJson('/tasks')
+}
+
+export function createTask(payload) {
+  return postJson('/tasks', payload)
 }
 
 export function getVolunteers() {
@@ -21,6 +58,10 @@ export function getVolunteers() {
 
 export function getVolunteerById(id) {
   return fetchJson(`/volunteers/${id}`)
+}
+
+export function createVolunteer(payload) {
+  return postJson('/volunteers', payload)
 }
 
 export function getContinuityNotes() {
