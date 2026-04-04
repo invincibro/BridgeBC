@@ -1,5 +1,6 @@
 // Navbar keeps the main MVP routes visible for demo navigation.
 import { NavLink } from 'react-router-dom'
+import logo from '../assets/bridgebc-logo.png'
 
 const links = [
   { label: 'Home', to: '/' },
@@ -14,8 +15,8 @@ function Navbar() {
     <header className="sticky top-0 z-20 border-b border-white/60 bg-[#fcfaf6]/85 backdrop-blur">
       <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
         <div>
-          <NavLink to="/" className="text-2xl font-semibold tracking-tight text-pine">
-            BridgeBC
+          <NavLink to="/" className="flex items-center gap-3">
+            <img src={logo} alt="BridgeBC logo" className="h-12 w-auto" />
           </NavLink>
           <p className="mt-1 max-w-xl text-sm text-slate-600">
             Helping nonprofits keep volunteer support steady, even during handoffs.
