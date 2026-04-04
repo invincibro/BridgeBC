@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 
 type OrganizationOption = {
   id: string
@@ -9,7 +9,7 @@ type TaskDetails = {
   org_id: string
   skills_needed: string[]
   languages_needed: string[]
-  availability_preference: string
+  availability_preference: '' | AvailabilityPreferenceOption
   volunteers_currently_needed: number
   volunteer_urgency: 'Low' | 'Medium' | 'High' | 'Critical'
   background_check_required: boolean
@@ -43,6 +43,18 @@ const LANGUAGE_OPTIONS = [
   'Hindi',
   'Tagalog',
 ]
+
+const AVAILABILITY_PREFERENCE_OPTIONS = [
+  'Weekdays preferred',
+  'Weekday mornings',
+  'Weekday afternoons',
+  'Weekday evenings',
+  'Weekends',
+  'Flexible',
+] as const
+
+type AvailabilityPreferenceOption =
+  (typeof AVAILABILITY_PREFERENCE_OPTIONS)[number]
 
 const URGENCY_OPTIONS: TaskDetails['volunteer_urgency'][] = ['Low', 'Medium', 'High', 'Critical']
 const emptyTask: TaskDetails = {
@@ -254,13 +266,24 @@ function CreateTask() {
             <label htmlFor="availability_preference" className="mb-2 block text-sm font-medium text-slate-700">
               Availability preference
             </label>
-            <input
+            <select
               id="availability_preference"
               value={form.availability_preference}
-              onChange={(event) => updateField('availability_preference', event.target.value)}
-              placeholder="Weekdays preferred"
+              onChange={(event) =>
+                updateField(
+                  'availability_preference',
+                  event.target.value as TaskDetails['availability_preference'],
+                )
+              }
               className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-moss focus:ring-2 focus:ring-sky/60"
-            />
+            >
+              <option value="">Select availability preference</option>
+              {AVAILABILITY_PREFERENCE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div>

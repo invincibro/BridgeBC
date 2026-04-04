@@ -5,38 +5,48 @@ import Card from '../components/Card.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import { getRoles, getVolunteers } from '../services/api.js'
 
-function scoreVolunteer(role, volunteer) {
-  let score = 55
+function normalizeList(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean)
+  }
 
-  const skillMatches = volunteer.skills.filter((skill) =>
-    role.skillsNeeded.includes(skill),
+  if (typeof value === 'string') {
+    return value
+      .split(';')
+      .map((item) => item.trim())
+      .filter(Boolean)
+  }
+
+  return []
+}
+
+function overlapRatio(sourceValues, targetValues) {
+  if (!targetValues.length) {
+    return 0.5
+  }
+
+  const source = normalizeList(sourceValues).map((item) => item.toLowerCase())
+  const target = normalizeList(targetValues).map((item) => item.toLowerCase())
+
+  if (!source.length) {
+    return 0
+  }
+
+  const matches = target.filter(
+    (targetValue) =>
+      source.includes(targetValue) ||
+      source.some((sourceValue) => sourceValue.includes(targetValue) || targetValue.includes(sourceValue)),
   ).length
 
-  if (volunteer.languages.some((language) => role.languagesPreferred.includes(language))) {
-    score += 10
-  }
-
-  if (
-    volunteer.availability.some((slot) =>
-      role.schedule.toLowerCase().includes(slot.toLowerCase()),
-    )
-  ) {
-    score += 15
-  }
-
-  score += skillMatches * 10
-
-  if (volunteer.status === 'Ready to match') {
-    score += 5
-  }
-
-  return Math.min(score, 98)
-  return matches / targetValues.length
+  return matches / target.length
 }
 
 function availabilityOverlap(task, volunteer) {
-  const schedule = task.availability_preference?.toLowerCase() || ''
-  const availability = volunteer.availability_options || []
+  const schedule =
+    task.availability_preference?.toLowerCase() ||
+    task.schedule?.toLowerCase() ||
+    ''
+  const availability = normalizeList(volunteer.availability_options || volunteer.availability)
 
   if (!schedule) {
     return 0.5
@@ -65,8 +75,10 @@ function availabilityOverlap(task, volunteer) {
 }
 
 function causeInterestScore(task, volunteer) {
-  const category = task.task_category?.toLowerCase()
-  const interests = normalizeList(volunteer.cause_areas_of_interest)
+  const category = (task.task_category || task.sector || '').toLowerCase()
+  const interests = normalizeList(
+    volunteer.cause_areas_of_interest || volunteer.interests,
+  ).map((item) => item.toLowerCase())
 
   if (!category) {
     return 0.5
@@ -94,8 +106,14 @@ function backgroundCheckScore(task, volunteer) {
 }
 
 function proximityScore(task, volunteer) {
-  const taskLocation = task.organization?.city?.toLowerCase() || ''
-  const volunteerLocation = volunteer.neighbourhood?.toLowerCase() || ''
+  const taskLocation =
+    task.organization?.city?.toLowerCase() ||
+    task.location?.toLowerCase() ||
+    ''
+  const volunteerLocation =
+    volunteer.neighbourhood?.toLowerCase() ||
+    volunteer.location?.toLowerCase() ||
+    ''
 
   if (!taskLocation || !volunteerLocation) {
     return 0.4
@@ -123,11 +141,16 @@ function urgencyScore(task) {
   return urgencyMap[task.urgency?.toLowerCase()] ?? 0.5
 }
 
-function scoreVolunteer(task, volunteer) {
+function scoreVolunteerMatch(task, volunteer) {
   const availabilityScore = availabilityOverlap(task, volunteer)
-  const languageTargets = task.languages_needed || []
-  const languageScore = overlapRatio(volunteer.languages_spoken, languageTargets)
-  const skillScore = overlapRatio(volunteer.skills, task.skills_needed)
+  const languageTargets = normalizeList(
+    task.languages_needed || task.languagesPreferred,
+  )
+  const languageScore = overlapRatio(
+    volunteer.languages_spoken || volunteer.languages,
+    languageTargets,
+  )
+  const skillScore = overlapRatio(volunteer.skills, task.skills_needed || task.skillsNeeded)
   const causeScore = causeInterestScore(task, volunteer)
   const backgroundScore = backgroundCheckScore(task, volunteer)
   const proximity = proximityScore(task, volunteer)
@@ -184,7 +207,7 @@ function VolunteerMatchPage() {
     return [...volunteers]
       .map((volunteer) => ({
         ...volunteer,
-        fitScore: scoreVolunteer(selectedRole, volunteer),
+        ...scoreVolunteerMatch(selectedRole, volunteer),
       }))
       .sort((first, second) => second.fitScore - first.fitScore)
       .slice(0, 4)
@@ -211,17 +234,19 @@ function VolunteerMatchPage() {
           >
             {roles.map((role) => (
               <option key={role.id} value={role.id}>
-                {role.title} - {role.nonprofit}
+                {role.title || role.task_title} - {role.nonprofit || role.organization?.org_name}
               </option>
             ))}
           </select>
 
           {selectedRole && (
             <div className="mt-5 rounded-2xl bg-sand p-4">
-              <p className="font-semibold text-pine">{selectedRole.title}</p>
-              <p className="mt-2 text-sm">{selectedRole.description}</p>
+              <p className="font-semibold text-pine">{selectedRole.title || selectedRole.task_title}</p>
+              <p className="mt-2 text-sm">
+                {selectedRole.description || selectedRole.task_description || 'Volunteer support opportunity'}
+              </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {selectedRole.skillsNeeded.map((skill) => (
+                {normalizeList(selectedRole.skillsNeeded || selectedRole.skills_needed).map((skill) => (
                   <Badge key={skill}>{skill}</Badge>
                 ))}
               </div>
@@ -236,7 +261,9 @@ function VolunteerMatchPage() {
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-lg font-semibold text-pine">{volunteer.name}</p>
-                    <p className="text-sm text-slate-500">{volunteer.location}</p>
+                    <p className="text-sm text-slate-500">
+                      {volunteer.location || volunteer.neighbourhood || 'Location not provided'}
+                    </p>
                   </div>
                   <Badge tone="success">{volunteer.fitScore}% fit</Badge>
                 </div>
@@ -244,17 +271,25 @@ function VolunteerMatchPage() {
                 <div className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
                   <div>
                     <p className="font-medium text-slate-500">Language</p>
-                    <p>{volunteer.languages.join(', ')}</p>
+                    <p>{normalizeList(volunteer.languages || volunteer.languages_spoken).join(', ') || 'Not provided'}</p>
                   </div>
                   <div>
-                   <p className="font-medium text-slate-500">Schedule</p>
-                    <p>{volunteer.availability || 'Not provided'}</p>
+                    <p className="font-medium text-slate-500">Schedule</p>
+                    <p>{normalizeList(volunteer.availability_options || volunteer.availability).join(', ') || 'Not provided'}</p>
                   </div>
                   <div>
                     <p className="font-medium text-slate-500">Check status</p>
-                    <p>{volunteer.status}</p>
+                    <p>{volunteer.status || volunteer.background_check_status || 'Not provided'}</p>
                   </div>
                 </div>
+
+                {volunteer.breakdown && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Badge tone="info">Availability {volunteer.breakdown.availability}%</Badge>
+                    <Badge tone="info">Language {volunteer.breakdown.language}%</Badge>
+                    <Badge tone="info">Skills {volunteer.breakdown.skills}%</Badge>
+                  </div>
+                )}
               </div>
             ))}
           </div>

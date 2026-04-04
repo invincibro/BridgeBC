@@ -45,7 +45,6 @@ function buildTaskTitle(row) {
 function normalizeTask(row) {
   const organization = normalizeOrganization(row);
   const primarySkill = row.skills_needed?.[0] || "";
-  const primarySkill = row.skills_needed?.[0] || "";
 
   return {
     id: `org-task-${row.id}`,
