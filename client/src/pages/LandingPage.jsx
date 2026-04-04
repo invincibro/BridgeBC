@@ -24,7 +24,7 @@ function LandingPage() {
         task.task_title,
         task.organization?.org_name || '',
         task.organization?.city || '',
-        task.availability_needed,
+        task.availability_preference,
         task.task_category,
       ]
       return fields.some((field) => field.toLowerCase().includes(query))
@@ -87,12 +87,18 @@ function LandingPage() {
                           {task.organization?.org_name} • {task.organization?.city}
                         </p>
                       </div>
-                      <Badge tone={task.urgency === 'High' || task.urgency === 'Critical' ? 'danger' : 'warning'}>
-                        {task.urgency} urgency
+                      <Badge
+                        tone={
+                          task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical'
+                            ? 'danger'
+                            : 'warning'
+                        }
+                      >
+                        {task.volunteer_urgency} urgency
                       </Badge>
                     </div>
                     <p className="mt-3 text-sm">
-                      {task.task_category} • {task.availability_needed}
+                      {task.task_category} • {task.availability_preference}
                     </p>
                   </div>
                 ))}

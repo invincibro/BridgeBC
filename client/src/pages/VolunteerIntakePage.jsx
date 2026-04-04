@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
 import FormField from '../components/FormField.jsx'
 import { SelectInput, TextInput, TogglePillGroup } from '../components/FormControls.jsx'
@@ -9,47 +8,62 @@ import { createVolunteer, getVolunteers } from '../services/api.js'
 
 const languageOptions = ['English', 'French', 'Cantonese', 'Mandarin', 'Punjabi', 'Hindi', 'Tagalog']
 const skillOptions = [
-  'Volunteer coordination',
-  'Community outreach',
-  'Food safety',
-  'Digital literacy',
-  'Teaching',
-  'Program support',
-  'Mentoring',
-  'Case notes',
-  'Event support',
+  'Translation/interpretation',
+  'Accounting/bookkeeping',
+  'Administrative support',
+  'Public speaking',
+  'Photography',
+  'Driving/transportation',
+  'Tutoring/mentorship',
+  'Legal knowledge',
+  'Childcare support',
+  'Social media',
+  'Data entry',
+  'Cooking/food prep',
+  'Elder care',
+  'Outreach/community engagement',
+  'Mental health support',
 ]
 const interestOptions = [
-  'Food access',
-  'Youth support',
-  'Seniors',
-  'Education',
-  'Digital access',
-  'Family support',
-  'Community food projects',
+  'Disability services',
+  'Indigenous communities',
+  'Arts & culture',
+  'Anti-poverty',
+  'Mental health',
+  'Newcomer support',
+  'Women & gender equity',
+  'Environment',
+  'Housing & homelessness',
+  'Animal welfare',
+  'Education & literacy',
+  'Senior services',
 ]
 const availabilityOptions = [
-  'Tuesday evenings',
-  'Saturday mornings',
-  'Wednesday after school',
-  'Sunday afternoons',
-  'Thursday evenings',
+  'Evenings only',
+  'Weekends only',
+  'Weekday afternoons',
+  'Flexible / as needed',
+  'Weekday evenings',
+  'Weekday mornings',
+  'Weekend mornings',
+  'Weekend afternoons',
 ]
-const experienceOptions = ['None', 'Some', 'Moderate', 'Extensive']
-const backgroundStatusOptions = ['Pending', 'In Progress', 'Completed']
+const experienceOptions = ['None', 'Some (1-2 orgs)', 'Experienced (3+ orgs)']
+const backgroundStatusOptions = ['Not yet', 'In progress', 'Completed']
 
 const initialForm = {
   first_name: '',
   last_name: '',
+  age: '',
   neighbourhood: '',
   languages_spoken: ['English'],
   skills: [],
-  interests: [],
-  availability: [],
-  hours_available_per_month: 8,
-  experience_level: 'None',
+  cause_areas_of_interest: [],
+  availability: 'Evenings only',
+  hours_available_per_month: 4,
+  prior_volunteer_experience: 'Some (1-2 orgs)',
   has_vehicle: false,
-  background_check_status: 'Pending',
+  background_check_status: 'Not yet',
 }
 
 function VolunteerIntakePage() {
@@ -70,7 +84,10 @@ function VolunteerIntakePage() {
 
       setForm((current) => ({
         ...current,
-        [field]: field === 'hours_available_per_month' ? Number(value) : value,
+        [field]:
+          field === 'hours_available_per_month' || field === 'age'
+            ? Number(value)
+            : value,
       }))
     }
   }
@@ -96,11 +113,11 @@ function VolunteerIntakePage() {
     <>
       <SectionHeader
         eyebrow="Volunteer profile"
-        title="Collect only the details that actually help matching."
-        description="This profile stays focused on skills, languages, availability, interests, and screening so staff can match people quickly."
+        title="Capture the volunteer fields exactly as they exist in the database."
+        description="This intake form now follows the volunteer table closely so records look like your spreadsheet and save cleanly to Postgres."
       />
 
-      <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+      <section className="mx-auto w-full max-w-4xl">
         <Card title="Volunteer intake form" subtitle="Short enough for a demo, rich enough for scoring.">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
             <FormField label="First name" htmlFor="first_name" required>
@@ -119,12 +136,21 @@ function VolunteerIntakePage() {
                 placeholder="Chen"
               />
             </FormField>
-            <FormField label="Neighbourhood / city" htmlFor="neighbourhood" required>
+            <FormField label="Age" htmlFor="age">
+              <TextInput
+                id="age"
+                type="number"
+                value={form.age}
+                onChange={updateField('age')}
+                placeholder="19"
+              />
+            </FormField>
+            <FormField label="Neighbourhood" htmlFor="neighbourhood" required>
               <TextInput
                 id="neighbourhood"
                 value={form.neighbourhood}
                 onChange={updateField('neighbourhood')}
-                placeholder="Vancouver"
+                placeholder="Kitsilano"
               />
             </FormField>
             <FormField label="Hours available per month" htmlFor="hours_available_per_month">
@@ -164,38 +190,35 @@ function VolunteerIntakePage() {
               </FormField>
             </div>
             <div className="md:col-span-2">
-              <FormField label="Cause areas / interests" htmlFor="interests">
+              <FormField label="Cause areas of interest" htmlFor="cause_areas_of_interest">
                 <TogglePillGroup
                   options={interestOptions}
-                  selected={form.interests}
+                  selected={form.cause_areas_of_interest}
                   onToggle={(option) =>
                     setForm((current) => ({
                       ...current,
-                      interests: toggleListValue(current.interests, option),
+                      cause_areas_of_interest: toggleListValue(
+                        current.cause_areas_of_interest,
+                        option,
+                      ),
                     }))
                   }
                 />
               </FormField>
             </div>
-            <div className="md:col-span-2">
-              <FormField label="Availability" htmlFor="availability" required>
-                <TogglePillGroup
-                  options={availabilityOptions}
-                  selected={form.availability}
-                  onToggle={(option) =>
-                    setForm((current) => ({
-                      ...current,
-                      availability: toggleListValue(current.availability, option),
-                    }))
-                  }
-                />
-              </FormField>
-            </div>
-            <FormField label="Experience level" htmlFor="experience_level">
+            <FormField label="Availability" htmlFor="availability" required>
               <SelectInput
-                id="experience_level"
-                value={form.experience_level}
-                onChange={updateField('experience_level')}
+                id="availability"
+                value={form.availability}
+                onChange={updateField('availability')}
+                options={availabilityOptions}
+              />
+            </FormField>
+            <FormField label="Prior volunteer experience" htmlFor="prior_volunteer_experience">
+              <SelectInput
+                id="prior_volunteer_experience"
+                value={form.prior_volunteer_experience}
+                onChange={updateField('prior_volunteer_experience')}
                 options={experienceOptions}
               />
             </FormField>
@@ -224,6 +247,12 @@ function VolunteerIntakePage() {
               </label>
             </div>
             {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
+            {createdVolunteer && (
+              <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                Saved <span className="font-semibold">{createdVolunteer.name}</span>. This person
+                is now available for matching.
+              </div>
+            )}
             <div className="md:col-span-2 flex justify-end">
               <button
                 type="submit"
@@ -235,42 +264,6 @@ function VolunteerIntakePage() {
             </div>
           </form>
         </Card>
-
-        <div className="space-y-6">
-          <Card title="Matching fields" subtitle="These fields line up directly with the task form.">
-            <div className="flex flex-wrap gap-2">
-              <Badge tone="info">languages_spoken</Badge>
-              <Badge tone="info">skills</Badge>
-              <Badge tone="info">availability</Badge>
-              <Badge tone="info">hours_available_per_month</Badge>
-              <Badge tone="warning">background_check_status</Badge>
-            </div>
-          </Card>
-
-          <Card title="Recent volunteers" subtitle="New volunteer profiles appear here immediately.">
-            <div className="space-y-4">
-              {createdVolunteer && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-                  Saved <span className="font-semibold">{createdVolunteer.name}</span>. This person
-                  is now available for matching.
-                </div>
-              )}
-
-              {volunteers.slice(0, 4).map((volunteer) => (
-                <div key={volunteer.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="font-semibold text-pine">{volunteer.name}</p>
-                    <Badge tone="info">{volunteer.background_check_status}</Badge>
-                  </div>
-                  <p className="mt-2 text-sm">
-                    {volunteer.neighbourhood} • {volunteer.hours_available_per_month} hrs/month
-                  </p>
-                  <p className="mt-2 text-sm text-slate-500">{volunteer.skills.join(', ')}</p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
       </section>
     </>
   )

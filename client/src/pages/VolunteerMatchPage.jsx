@@ -24,8 +24,8 @@ function overlapRatio(source, target) {
 }
 
 function availabilityOverlap(task, volunteer) {
-  const schedule = task.availability_needed?.toLowerCase() || ''
-  const availability = volunteer.availability || []
+  const schedule = task.availability_preference?.toLowerCase() || ''
+  const availability = volunteer.availability_options || []
 
   if (!schedule) {
     return 0.5
@@ -55,7 +55,7 @@ function availabilityOverlap(task, volunteer) {
 
 function causeInterestScore(task, volunteer) {
   const category = task.task_category?.toLowerCase()
-  const interests = normalizeList(volunteer.interests)
+  const interests = normalizeList(volunteer.cause_areas_of_interest)
 
   if (!category) {
     return 0.5
@@ -245,8 +245,8 @@ function VolunteerMatchPage() {
                     <p>{volunteer.languages_spoken.join(', ')}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-slate-500">Schedule</p>
-                    <p>{volunteer.availability.join(', ')}</p>
+                   <p className="font-medium text-slate-500">Schedule</p>
+                    <p>{volunteer.availability || 'Not provided'}</p>
                   </div>
                   <div>
                     <p className="font-medium text-slate-500">Check status</p>

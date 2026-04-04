@@ -14,13 +14,10 @@ function NonprofitDashboardPage() {
     getContinuityNotes().then(setNotes).catch(() => setNotes([]))
   }, [])
 
-  const openTasks = useMemo(
-    () => tasks.filter((task) => task.status === 'Open'),
-    [tasks],
-  )
+  const openTasks = useMemo(() => tasks, [tasks])
 
   const highUrgencyCount = openTasks.filter(
-    (task) => task.urgency === 'High' || task.urgency === 'Critical',
+    (task) => task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical',
   ).length
   const continuityAlerts = notes.filter((note) => note.alertLevel !== 'Low')
 
@@ -56,11 +53,17 @@ function NonprofitDashboardPage() {
                   <div>
                     <p className="font-semibold text-pine">{task.task_title}</p>
                     <p className="text-sm text-slate-500">
-                      {task.organization?.org_name} • {task.availability_needed}
+                      {task.organization?.org_name} • {task.availability_preference}
                     </p>
                   </div>
-                  <Badge tone={task.urgency === 'High' || task.urgency === 'Critical' ? 'danger' : 'warning'}>
-                    {task.urgency}
+                  <Badge
+                    tone={
+                      task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical'
+                        ? 'danger'
+                        : 'warning'
+                    }
+                  >
+                    {task.volunteer_urgency}
                   </Badge>
                 </div>
                 <p className="mt-3 text-sm">{task.task_description}</p>

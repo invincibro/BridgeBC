@@ -5,7 +5,12 @@ import { SelectInput, TextInput } from '../components/FormControls.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import { createOrganization, getOrganizations } from '../services/api.js'
 
-const orgSizeOptions = ['Micro', 'Small', 'Medium', 'Large']
+const orgSizeOptions = [
+  'Micro (1-5 staff)',
+  'Small (6-15 staff)',
+  'Medium (16-50 staff)',
+  'Large (51+ staff)',
+]
 const provinceOptions = ['BC', 'AB', 'ON', 'QC', 'NS', 'NB', 'PE', 'NL', 'SK', 'MB', 'YT', 'NT', 'NU']
 const countryOptions = ['CA', 'US']
 
@@ -20,7 +25,7 @@ const initialForm = {
   province: 'BC',
   postal_code: '',
   country: 'CA',
-  org_size: 'Small',
+  org_size: 'Small (6-15 staff)',
 }
 
 function OrganizationFormPage() {
