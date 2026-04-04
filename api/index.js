@@ -249,6 +249,33 @@ app.post("/api/organizations", async (req, res) => {
   if (!BN || !legal_name) {
     return res.status(400).json({ message: "BN and legal_name are required." });
   }
+
+  try {
+    const { rows } = await pool.query(
+      `INSERT INTO organizations (
+        bn, legal_name, account_name, address1, address2, city,
+        province, postal_code, country, sector, org_size
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+      RETURNING *`,
+      [
+        BN,
+        legal_name,
+        account_name || null,
+        address1 || null,
+        address2 || null,
+        city || null,
+        province || null,
+        postal_code || null,
+        country || null,
+        sector || null,
+        org_size || null,
+      ]
+    );
+
+    return res.status(201).json(normalizeOrganization(rows[0]));
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
 });
 
 
