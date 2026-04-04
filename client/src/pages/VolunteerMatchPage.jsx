@@ -31,6 +31,131 @@ function scoreVolunteer(role, volunteer) {
   }
 
   return Math.min(score, 98)
+  return matches / targetValues.length
+}
+
+function availabilityOverlap(task, volunteer) {
+  const schedule = task.availability_preference?.toLowerCase() || ''
+  const availability = volunteer.availability_options || []
+
+  if (!schedule) {
+    return 0.5
+  }
+
+  if (!availability.length) {
+    return 0
+  }
+
+  const exactMatch = availability.some((slot) => slot.toLowerCase() === schedule)
+  if (exactMatch) {
+    return 1
+  }
+
+  const partialMatch = availability.some((slot) => {
+    const normalizedSlot = slot.toLowerCase()
+    return schedule.includes(normalizedSlot) || normalizedSlot.includes(schedule)
+  })
+
+  if (partialMatch) {
+    return 0.8
+  }
+
+  const flexibleMatch = availability.some((slot) => slot.toLowerCase().includes('flexible'))
+  return flexibleMatch ? 0.75 : 0.2
+}
+
+function causeInterestScore(task, volunteer) {
+  const category = task.task_category?.toLowerCase()
+  const interests = normalizeList(volunteer.cause_areas_of_interest)
+
+  if (!category) {
+    return 0.5
+  }
+
+  return interests.some((interest) => interest === category) ? 1 : 0
+}
+
+function backgroundCheckScore(task, volunteer) {
+  if (!task.background_check_required) {
+    return 1
+  }
+
+  const status = volunteer.background_check_status?.toLowerCase() || ''
+
+  if (status === 'completed') {
+    return 1
+  }
+
+  if (status === 'pending' || status === 'in progress') {
+    return 0.4
+  }
+
+  return 0
+}
+
+function proximityScore(task, volunteer) {
+  const taskLocation = task.organization?.city?.toLowerCase() || ''
+  const volunteerLocation = volunteer.neighbourhood?.toLowerCase() || ''
+
+  if (!taskLocation || !volunteerLocation) {
+    return 0.4
+  }
+
+  if (task.location_type?.toLowerCase() === 'remote') {
+    return 1
+  }
+
+  if (taskLocation.includes(volunteerLocation) || volunteerLocation.includes(taskLocation)) {
+    return 1
+  }
+
+  return 0.35
+}
+
+function urgencyScore(task) {
+  const urgencyMap = {
+    low: 0.2,
+    medium: 0.5,
+    high: 0.8,
+    critical: 1,
+  }
+
+  return urgencyMap[task.urgency?.toLowerCase()] ?? 0.5
+}
+
+function scoreVolunteer(task, volunteer) {
+  const availabilityScore = availabilityOverlap(task, volunteer)
+  const languageTargets = task.languages_needed || []
+  const languageScore = overlapRatio(volunteer.languages_spoken, languageTargets)
+  const skillScore = overlapRatio(volunteer.skills, task.skills_needed)
+  const causeScore = causeInterestScore(task, volunteer)
+  const backgroundScore = backgroundCheckScore(task, volunteer)
+  const proximity = proximityScore(task, volunteer)
+  const urgency = urgencyScore(task)
+
+  const fitScore = Math.round(
+    100 *
+      (
+        0.3 * availabilityScore +
+        0.2 * languageScore +
+        0.2 * skillScore +
+        0.1 * causeScore +
+        0.1 * backgroundScore +
+        0.05 * proximity +
+        0.05 * urgency
+      ),
+  )
+
+  return {
+    fitScore,
+    breakdown: {
+      availability: Math.round(availabilityScore * 100),
+      language: Math.round(languageScore * 100),
+      skills: Math.round(skillScore * 100),
+      cause: Math.round(causeScore * 100),
+      readiness: Math.round(backgroundScore * 100),
+    },
+  }
 }
 
 function VolunteerMatchPage() {
@@ -122,8 +247,8 @@ function VolunteerMatchPage() {
                     <p>{volunteer.languages.join(', ')}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-slate-500">Schedule</p>
-                    <p>{volunteer.availability.join(', ')}</p>
+                   <p className="font-medium text-slate-500">Schedule</p>
+                    <p>{volunteer.availability || 'Not provided'}</p>
                   </div>
                   <div>
                     <p className="font-medium text-slate-500">Check status</p>

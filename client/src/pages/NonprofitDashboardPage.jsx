@@ -19,7 +19,9 @@ function NonprofitDashboardPage() {
     [roles],
   )
 
-  const highUrgencyCount = openRoles.filter((role) => role.urgency === 'High').length
+  const highUrgencyCount = openTasks.filter(
+    (task) => task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical',
+  ).length
   const continuityAlerts = notes.filter((note) => note.alertLevel !== 'Low')
 
   return (

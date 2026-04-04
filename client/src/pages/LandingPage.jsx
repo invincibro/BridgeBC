@@ -19,8 +19,14 @@ function LandingPage() {
   const filteredRoles = useMemo(() => {
     const query = search.toLowerCase()
 
-    return roles.filter((role) => {
-      const fields = [role.title, role.nonprofit, role.location, role.commitment]
+    return tasks.filter((task) => {
+      const fields = [
+        task.task_title,
+        task.organization?.org_name || '',
+        task.organization?.city || '',
+        task.availability_preference,
+        task.task_category,
+      ]
       return fields.some((field) => field.toLowerCase().includes(query))
     })
   }, [roles, search])
@@ -81,11 +87,19 @@ function LandingPage() {
                           {role.nonprofit} • {role.location}
                         </p>
                       </div>
-                      <Badge tone={role.urgency === 'High' ? 'danger' : 'warning'}>
-                        {role.urgency} urgency
+                      <Badge
+                        tone={
+                          task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical'
+                            ? 'danger'
+                            : 'warning'
+                        }
+                      >
+                        {task.volunteer_urgency} urgency
                       </Badge>
                     </div>
-                    <p className="mt-3 text-sm">{role.commitment}</p>
+                    <p className="mt-3 text-sm">
+                      {task.task_category} • {task.availability_preference}
+                    </p>
                   </div>
                 ))}
             </div>

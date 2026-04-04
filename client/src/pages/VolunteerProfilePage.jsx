@@ -49,16 +49,36 @@ function VolunteerProfilePage() {
               </div>
             </div>
             <div>
+              <p className="font-medium text-slate-500">Age</p>
+              <p className="mt-2">{volunteer.age || 'Not provided'}</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Age</p>
+              <p className="mt-2">{volunteer.age || 'Not provided'}</p>
+            </div>
+            <div>
               <p className="font-medium text-slate-500">Interests</p>
-              <p className="mt-2">{volunteer.interests.join(', ')}</p>
+              <p className="mt-2">{(volunteer.cause_areas_of_interest || []).join(', ')}</p>
             </div>
             <div>
               <p className="font-medium text-slate-500">Availability</p>
-              <p className="mt-2">{volunteer.availability.join(', ')}</p>
+              <p className="mt-2">{volunteer.availability || 'Not provided'}</p>
             </div>
             <div>
               <p className="font-medium text-slate-500">Languages</p>
-              <p className="mt-2">{volunteer.languages.join(', ')}</p>
+              <p className="mt-2">{volunteer.languages_spoken.join(', ')}</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Hours available</p>
+              <p className="mt-2">{volunteer.hours_available_per_month} per month</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Prior volunteer experience</p>
+              <p className="mt-2">{volunteer.prior_volunteer_experience}</p>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Vehicle</p>
+              <p className="mt-2">{volunteer.has_vehicle ? 'Yes' : 'No'}</p>
             </div>
           </div>
         </Card>

@@ -1,3 +1,4 @@
+-- Active: 1774926568635@@127.0.0.1@5432@postgres
 -- 003_create_organizations.sql
 CREATE TABLE organizations
     (
