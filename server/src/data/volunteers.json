@@ -1,0 +1,85 @@
+[
+  {
+    "id": "vol-101",
+    "name": "Maya Chen",
+    "location": "Vancouver",
+    "skills": ["Volunteer coordination", "Community outreach", "Food safety"],
+    "interests": ["Food access", "Neighbourhood events", "Youth support"],
+    "availability": ["Tuesday evenings", "Sunday afternoons"],
+    "languages": ["English", "Cantonese"],
+    "status": "Ready to match",
+    "pastRoles": [
+      {
+        "title": "Meal Program Helper",
+        "nonprofit": "Downtown Care Network",
+        "year": "2025",
+        "length": "8 months",
+        "handoffStrength": "Documented supply checklist and volunteer orientation notes."
+      },
+      {
+        "title": "Neighbourhood Event Greeter",
+        "nonprofit": "Community Makers",
+        "year": "2024",
+        "length": "4 months",
+        "handoffStrength": "Shared contact list and recurring logistics notes."
+      }
+    ]
+  },
+  {
+    "id": "vol-102",
+    "name": "Harjit Gill",
+    "location": "Burnaby",
+    "skills": ["Digital literacy", "Teaching", "Program support"],
+    "interests": ["Seniors", "Digital access", "Newcomer support"],
+    "availability": ["Saturday mornings", "Wednesday after school"],
+    "languages": ["English", "Punjabi"],
+    "status": "Reference check in progress",
+    "pastRoles": [
+      {
+        "title": "Library Device Coach",
+        "nonprofit": "Burnaby Learning Circle",
+        "year": "2025",
+        "length": "6 months",
+        "handoffStrength": "Left workshop templates and recurring troubleshooting notes."
+      }
+    ]
+  },
+  {
+    "id": "vol-103",
+    "name": "Ana Santos",
+    "location": "New Westminster",
+    "skills": ["Mentoring", "Case notes", "Program support"],
+    "interests": ["Youth development", "Education", "Family support"],
+    "availability": ["Wednesday after school", "Thursday evenings"],
+    "languages": ["English", "Tagalog"],
+    "status": "Ready to match",
+    "pastRoles": [
+      {
+        "title": "Homework Club Mentor",
+        "nonprofit": "Study Together Society",
+        "year": "2025",
+        "length": "10 months",
+        "handoffStrength": "Tracked student goals and next-session reminders."
+      }
+    ]
+  },
+  {
+    "id": "vol-104",
+    "name": "Karan Mehta",
+    "location": "Surrey",
+    "skills": ["Hospitality", "Event support", "Community outreach"],
+    "interests": ["Community food projects", "Family programming", "Gardening"],
+    "availability": ["Sunday afternoons", "Saturday mornings"],
+    "languages": ["English", "Hindi"],
+    "status": "Ready to match",
+    "pastRoles": [
+      {
+        "title": "Family Resource Host",
+        "nonprofit": "South Fraser Welcome Centre",
+        "year": "2024",
+        "length": "5 months",
+        "handoffStrength": "Maintained a simple onboarding checklist for replacements."
+      }
+    ]
+  }
+]
