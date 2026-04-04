@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
 import FormField from '../components/FormField.jsx'
 import { SelectInput, TextInput } from '../components/FormControls.jsx'
@@ -69,7 +68,7 @@ function OrganizationFormPage() {
         description="This form now matches the organization table much more closely, including BN and full address fields that belong to the nonprofit record."
       />
 
-      <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+      <section className="mx-auto w-full max-w-4xl">
         <div className="space-y-6">
           <Card title="Profile form" subtitle="Save the core organization record here. Volunteer need details should live on task postings.">
             <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
@@ -186,6 +185,12 @@ function OrganizationFormPage() {
                 />
               </FormField>
               {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
+              {createdOrganization && (
+                <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+                  Saved <span className="font-semibold">{createdOrganization.org_name}</span> with
+                  the full organization record. You can now create tasks under this organization.
+                </div>
+              )}
               <div className="md:col-span-2 flex justify-end">
                 <button
                   type="submit"
@@ -196,48 +201,6 @@ function OrganizationFormPage() {
                 </button>
               </div>
             </form>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card title="Why this fits better" subtitle="These fields now align much more closely with the nonprofit table you showed.">
-            <div className="space-y-3 text-sm text-slate-600">
-              <p>The profile now captures `BN`, `legal_name`, `account_name`, address fields, `city`, `province`, `postal_code`, `country`, `sector`, and `org_size`.</p>
-              <p>This keeps organization identity and location on the nonprofit record instead of mixing them into task creation.</p>
-              <p>Volunteer urgency, skills needed, and language needs still belong on tasks, not on the organization profile.</p>
-            </div>
-          </Card>
-
-          <Card title="Created profiles" subtitle="New organizations appear here immediately from the mock API.">
-            <div className="space-y-4">
-              {createdOrganization && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-                  Saved <span className="font-semibold">{createdOrganization.org_name}</span> with
-                  the full organization record. You can now create tasks under this organization.
-                </div>
-              )}
-
-              {organizations.slice(0, 4).map((organization) => (
-                <div key={organization.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <p className="font-semibold text-pine">{organization.org_name}</p>
-                    <Badge tone="info">{organization.org_size}</Badge>
-                  </div>
-                  <p className="mt-2 text-sm">
-                    {organization.city} • {organization.sector}
-                  </p>
-                  <p className="mt-2 text-sm text-slate-500">
-                    {organization.legal_name}
-                  </p>
-                  <p className="mt-2 text-sm text-slate-500">
-                    BN: {organization.BN || 'Not set'}
-                  </p>
-                  <p className="mt-1 text-sm text-slate-500">
-                    {[organization.address1, organization.address2].filter(Boolean).join(', ')}
-                  </p>
-                </div>
-              ))}
-            </div>
           </Card>
         </div>
       </section>
