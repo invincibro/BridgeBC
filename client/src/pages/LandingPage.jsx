@@ -83,6 +83,14 @@ function LandingPage() {
                       </div>
                       <Badge tone={role.urgency === 'High' ? 'danger' : 'warning'}>
                         {role.urgency} urgency
+                      <Badge
+                        tone={
+                          task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical'
+                            ? 'danger'
+                            : 'warning'
+                        }
+                      >
+                        {task.volunteer_urgency} urgency
                       </Badge>
                     </div>
                     <p className="mt-3 text-sm">{role.commitment}</p>

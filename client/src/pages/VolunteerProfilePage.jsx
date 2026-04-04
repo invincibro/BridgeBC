@@ -49,12 +49,16 @@ function VolunteerProfilePage() {
               </div>
             </div>
             <div>
+              <p className="font-medium text-slate-500">Age</p>
+              <p className="mt-2">{volunteer.age || 'Not provided'}</p>
+            </div>
+            <div>
               <p className="font-medium text-slate-500">Interests</p>
-              <p className="mt-2">{volunteer.interests.join(', ')}</p>
+              <p className="mt-2">{(volunteer.cause_areas_of_interest || []).join(', ')}</p>
             </div>
             <div>
               <p className="font-medium text-slate-500">Availability</p>
-              <p className="mt-2">{volunteer.availability.join(', ')}</p>
+              <p className="mt-2">{volunteer.availability || 'Not provided'}</p>
             </div>
             <div>
               <p className="font-medium text-slate-500">Languages</p>

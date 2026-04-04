@@ -122,8 +122,8 @@ function VolunteerMatchPage() {
                     <p>{volunteer.languages.join(', ')}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-slate-500">Schedule</p>
-                    <p>{volunteer.availability.join(', ')}</p>
+                   <p className="font-medium text-slate-500">Schedule</p>
+                    <p>{volunteer.availability || 'Not provided'}</p>
                   </div>
                   <div>
                     <p className="font-medium text-slate-500">Check status</p>
