@@ -1,0 +1,151 @@
+volunteer_ID,first_name,last_name,age,neighbourhood,languages_spoken,skills,cause_areas_of_interest,availability,hours_available_per_month,prior_volunteer_experience,has_vehicle,background_check_status
+VOL-001,Grace,Johansson,19,Victoria-Fraserview,English; Hindi,Translation/interpretation; Legal knowledge,Disability services,Evenings only,4,Some (1-2 orgs),Yes,Completed
+VOL-002,Ryan,Wang,56,Mount Pleasant,English,Accounting/bookkeeping; Arts facilitation,Indigenous community support; Arts & culture; Senior services,Weekends only,8,Experienced (3+ orgs),Yes,In progress
+VOL-003,Sarah,Torres,39,Victoria-Fraserview,English; Spanish,Administrative support; Social media,Arts & culture,Weekday afternoons,8,Experienced (3+ orgs),No,In progress
+VOL-004,Julia,Khalid,52,Riley Park,English; Somali,Public speaking,Anti-poverty; Disability services,Flexible / as needed,8,Experienced (3+ orgs),Yes,Completed
+VOL-005,Lucas,Osei,72,Sunset,English; Punjabi,Photography; IT support; Arts facilitation; Cooking/food prep,Mental health,Flexible / as needed,8,Experienced (3+ orgs),No,Not yet
+VOL-006,James,Nakamura,58,Hastings-Sunrise,English,Driving/transportation; IT support,Newcomer & immigrant support; Disability services,Evenings only,8,Experienced (3+ orgs),No,Not yet
+VOL-007,Ryan,Hassan,69,Oakridge,English; Somali,Tutoring/mentorship; Fundraising; Mental health support,Mental health; Senior services; Disability services,Weekends only,12,Experienced (3+ orgs),No,Completed
+VOL-008,Marcus,Yamamoto,65,Fairview,English,Legal knowledge; Mental health support; Elder care,Arts & culture; Mental health; Senior services,Weekday evenings,20,Some (1-2 orgs),No,In progress
+VOL-009,Leila,Mitchell,28,Kitsilano,English,Childcare support,Women & gender equity; Environment,Evenings only,8,Experienced (3+ orgs),No,Completed
+VOL-010,Julia,Johansson,61,Fairview,English; Arabic,Social media; Graphic design; Elder care,Environment,Weekday mornings,8,Experienced (3+ orgs),No,Not yet
+VOL-011,Daniel,Mitchell,37,Downtown,English,Translation/interpretation; Cooking/food prep,Indigenous community support,Evenings only,2,Some (1-2 orgs),No,Completed
+VOL-012,Ingrid,Sharma,33,Strathcona,English; Hindi,Tutoring/mentorship,Environment; Anti-poverty; Housing & homelessness,Evenings only,4,None,No,Not yet
+VOL-013,Jason,Andersen,56,Kitsilano,English; Vietnamese,Accounting/bookkeeping; Graphic design,Disability services; Animal welfare,Flexible / as needed,16,Experienced (3+ orgs),No,Completed
+VOL-014,James,Tanaka,19,South Cambie,English,Mental health support; First aid/CPR,Housing & homelessness,Weekday mornings,8,None,Yes,Completed
+VOL-015,Thomas,Yamamoto,35,West End,English; Vietnamese,Legal knowledge; Mental health support,Environment; Senior services; Legal aid,Weekends only,12,None,Yes,Completed
+VOL-016,Yuki,Mensah,47,Strathcona,English; Punjabi,Childcare support,Mental health; Legal aid; Housing & homelessness,Weekend mornings,8,None,No,Completed
+VOL-017,Amara,Khalid,33,Grandview-Woodland,English; Mandarin; Cantonese,Data entry,Indigenous community support; Anti-poverty; Food security,Weekday afternoons,8,None,No,Completed
+VOL-018,Elena,Martinez,28,Dunbar-Southlands,English,Photography; IT support; Graphic design; Elder care,Education & literacy; Legal aid; Indigenous community support,Weekends only,4,None,Yes,Completed
+VOL-019,Nasrin,Haddad,21,Oakridge,English; Mandarin,Mental health support,Indigenous community support; Anti-poverty,Evenings only,4,None,No,In progress
+VOL-020,James,Nakamura,22,Sunset,English; Somali,Mental health support,Women & gender equity,Weekday mornings,4,Some (1-2 orgs),No,Not yet
+VOL-021,Jason,Gonzalez,60,Oakridge,English; Hindi,Childcare support; Translation/interpretation; Research,Newcomer & immigrant support; Environment; Mental health,Weekday afternoons,2,Some (1-2 orgs),No,In progress
+VOL-022,James,Haddad,31,Downtown,English; Arabic,Cooking/food prep; Tutoring/mentorship,Mental health,Weekend afternoons,4,Some (1-2 orgs),No,Completed
+VOL-023,Andre,Andersen,18,Fairview,English; Korean,Translation/interpretation,Housing & homelessness; Animal welfare,Evenings only,4,Some (1-2 orgs),No,Not yet
+VOL-024,Fatima,Nasser,58,Victoria-Fraserview,English; Spanish; French,Photography; Data entry; Tutoring/mentorship; Arts facilitation,Anti-poverty; Newcomer & immigrant support,Weekday mornings,2,Some (1-2 orgs),Yes,In progress
+VOL-025,Tariq,Mohamad,46,Fairview,English; Tigrinya,Social media,Animal welfare,Weekday evenings,20,None,No,Not yet
+VOL-026,Yuki,Singh,20,Marpole,English; Farsi,Cooking/food prep,Disability services,Weekend mornings,4,Some (1-2 orgs),No,In progress
+VOL-027,Linh,Mohamad,27,Sunset,English; Tagalog,Elder care; Event coordination,Education & literacy,Flexible / as needed,12,Experienced (3+ orgs),No,In progress
+VOL-028,Amara,Al-Rashid,68,Riley Park,English; Somali,Outreach/community engagement,Senior services,Weekends only,8,Some (1-2 orgs),No,Completed
+VOL-029,Priya,Petrov,30,Dunbar-Southlands,English; French,Tutoring/mentorship; Photography; Cooking/food prep,Indigenous community support; Arts & culture; Disability services,Evenings only,8,Experienced (3+ orgs),Yes,In progress
+VOL-030,Hannah,Fialoa,34,Strathcona,English; Punjabi,Cooking/food prep; Legal knowledge; Administrative support; Elder care,Indigenous community support; Housing & homelessness; Arts & culture,Weekend mornings,8,None,No,Not yet
+VOL-031,Chris,Nasser,64,Kensington-Cedar Cottage,English; Farsi,Tutoring/mentorship; Research; Administrative support; Teaching/training,Disability services; Anti-poverty,Weekday afternoons,8,Some (1-2 orgs),No,Completed
+VOL-032,Sarah,Li,53,Renfrew-Collingwood,English; Vietnamese,Research; Childcare support; Legal knowledge; Driving/transportation,Women & gender equity; Newcomer & immigrant support; Arts & culture,Evenings only,2,Some (1-2 orgs),Yes,Not yet
+VOL-033,Ben,Dubois,38,Point Grey,English; Mandarin; Cantonese,Research; Fundraising; Grant writing; Outreach/community engagement,Youth services; Disability services; Housing & homelessness,Weekend afternoons,20,Experienced (3+ orgs),No,Completed
+VOL-034,Michael,Yamamoto,61,Marpole,English; Hindi,Translation/interpretation; Event coordination,Senior services,Weekends only,4,Some (1-2 orgs),No,Not yet
+VOL-035,Kofi,Campbell,42,West End,English; Somali,Translation/interpretation; Arts facilitation,Food security; Legal aid; Anti-poverty,Weekday afternoons,12,Some (1-2 orgs),No,Not yet
+VOL-036,Rania,Martinez,53,Sunset,English; Punjabi,Translation/interpretation; IT support; Research; Grant writing,Women & gender equity; Mental health; Legal aid,Weekends only,20,Some (1-2 orgs),No,Completed
+VOL-037,Tariq,Mohamad,48,Point Grey,English; Arabic,Arts facilitation; Photography,Environment; Disability services; Senior services,Weekend afternoons,16,None,No,Completed
+VOL-038,David,Haddad,23,Renfrew-Collingwood,English; Spanish,Childcare support; Accounting/bookkeeping,Education & literacy,Weekend mornings,4,Some (1-2 orgs),No,Completed
+VOL-039,Sofia,Gonzalez,71,Kitsilano,English; Somali,Mental health support,Environment; Food security,Flexible / as needed,8,Experienced (3+ orgs),No,In progress
+VOL-040,Patrick,Haddad,65,Fairview,English,Outreach/community engagement; First aid/CPR,Arts & culture; Environment,Weekday mornings,12,Some (1-2 orgs),No,Completed
+VOL-041,Tariq,Khalid,26,Shaughnessy,English,Childcare support,Women & gender equity; Disability services; Food security,Weekday afternoons,12,None,No,Completed
+VOL-042,Mohammed,Rossi,31,Point Grey,English; French,Childcare support; Photography; Elder care,Anti-poverty; Housing & homelessness,Weekends only,2,Experienced (3+ orgs),Yes,In progress
+VOL-043,Ryan,Dubois,22,Strathcona,English,Fundraising; Event coordination,Youth services; Senior services; Animal welfare,Weekends only,4,Some (1-2 orgs),Yes,Not yet
+VOL-044,Devi,Ivanova,28,Shaughnessy,English,Driving/transportation,Housing & homelessness; Women & gender equity,Weekday mornings,8,Some (1-2 orgs),No,Completed
+VOL-045,Kofi,Williams,22,South Cambie,English; Hindi,Accounting/bookkeeping,Anti-poverty; Disability services,Weekday afternoons,2,Some (1-2 orgs),No,Completed
+VOL-046,Thomas,Dubois,39,Mount Pleasant,English; Tigrinya,Social media; Elder care; Cooking/food prep; Arts facilitation,Education & literacy; Youth services,Weekdays only,4,Experienced (3+ orgs),No,Completed
+VOL-047,Chris,Ramachandran,48,Point Grey,English; Tigrinya,Administrative support; First aid/CPR; Tutoring/mentorship,Animal welfare; Environment,Weekend mornings,16,Some (1-2 orgs),No,Completed
+VOL-048,Mina,Rossi,29,West End,English; Vietnamese,Photography; Administrative support; Teaching/training,Animal welfare; Newcomer & immigrant support; Indigenous community support,Weekday mornings,20,Experienced (3+ orgs),Yes,Not yet
+VOL-049,Mina,Okonkwo,66,Sunset,English; Hindi; Punjabi,IT support; Event coordination; Tutoring/mentorship; Graphic design,Arts & culture,Weekend mornings,8,Experienced (3+ orgs),No,Not yet
+VOL-050,Wei,Torres,65,Fairview,English; French,Accounting/bookkeeping; IT support; Photography,Newcomer & immigrant support; Senior services,Weekday afternoons,8,Some (1-2 orgs),No,In progress
+VOL-051,Sarah,Park,30,Kensington-Cedar Cottage,English; Hindi; Punjabi,Legal knowledge; Mental health support; Grant writing,Newcomer & immigrant support; Housing & homelessness; Senior services,Weekend afternoons,8,Some (1-2 orgs),No,Not yet
+VOL-052,Marcus,Fernandez,20,Strathcona,English,Accounting/bookkeeping; Translation/interpretation; Arts facilitation,Housing & homelessness; Anti-poverty,Weekday mornings,8,Some (1-2 orgs),No,Completed
+VOL-053,Sofia,Nkosi,48,Riley Park,English; Cantonese,Outreach/community engagement; Tutoring/mentorship; Mental health support; Arts facilitation,Food security; Youth services; Anti-poverty,Weekend afternoons,4,Experienced (3+ orgs),Yes,Not yet
+VOL-054,Ben,Nakamura,68,Shaughnessy,English; Hindi,IT support; Graphic design; Mental health support; Elder care,Women & gender equity; Animal welfare,Weekday mornings,4,Experienced (3+ orgs),Yes,Completed
+VOL-055,Tara,Osei,28,Sunset,English; Tagalog,Driving/transportation,Arts & culture,Weekends only,16,Some (1-2 orgs),Yes,Not yet
+VOL-056,Sarah,Khalid,22,Sunset,English; Arabic,Elder care; Social media,Senior services; Disability services; Youth services,Weekend afternoons,4,None,Yes,Completed
+VOL-057,Nasrin,Reyes,36,Point Grey,English; Punjabi,Accounting/bookkeeping; Graphic design; Childcare support; Photography,Indigenous community support; Environment; Anti-poverty,Weekday afternoons,2,Experienced (3+ orgs),No,Not yet
+VOL-058,Priya,Osei,32,South Cambie,English,Research,Women & gender equity; Food security,Weekday evenings,16,Some (1-2 orgs),No,Completed
+VOL-059,Pita,Torres,58,West End,English; Cantonese,Cooking/food prep; Elder care; Administrative support; Research,Anti-poverty,Weekday evenings,8,Some (1-2 orgs),No,Not yet
+VOL-060,Elena,Scott,53,Strathcona,English; Mandarin; Cantonese,Administrative support,Mental health; Housing & homelessness,Weekdays only,20,Experienced (3+ orgs),Yes,In progress
+VOL-061,Rania,Mensah,21,Kensington-Cedar Cottage,English; Spanish; French,Teaching/training; Outreach/community engagement; Arts facilitation,Legal aid; Food security,Weekend mornings,8,Some (1-2 orgs),No,Completed
+VOL-062,Sarah,Diallo,25,Mount Pleasant,English,Accounting/bookkeeping; Driving/transportation,Indigenous community support; Food security,Evenings only,12,None,No,In progress
+VOL-063,Rania,Johansson,59,Renfrew-Collingwood,English; Hindi; Punjabi,Grant writing; Accounting/bookkeeping; Photography,Anti-poverty; Environment,Weekends only,8,Some (1-2 orgs),Yes,Completed
+VOL-064,Ben,Wang,65,Renfrew-Collingwood,English; Cantonese,Elder care; Administrative support; Grant writing,Anti-poverty; Food security,Weekend afternoons,8,Experienced (3+ orgs),No,Not yet
+VOL-065,Leila,Jensen,52,West End,English; Farsi,Public speaking; Childcare support; IT support,Anti-poverty; Senior services,Weekend mornings,12,Some (1-2 orgs),No,Completed
+VOL-066,Nasrin,MacLeod,63,Dunbar-Southlands,English; Somali,Outreach/community engagement; Data entry,Indigenous community support,Flexible / as needed,4,Experienced (3+ orgs),No,Not yet
+VOL-067,Rania,Chen,64,Renfrew-Collingwood,English; Tigrinya,Tutoring/mentorship; Outreach/community engagement,Mental health; Women & gender equity,Weekdays only,4,Experienced (3+ orgs),No,In progress
+VOL-068,Mohammed,Rossi,58,West End,English,Teaching/training,Senior services,Weekend afternoons,8,Experienced (3+ orgs),No,Completed
+VOL-069,Grace,Asante,24,Point Grey,English; Tagalog,Event coordination; Data entry; Administrative support,Newcomer & immigrant support,Flexible / as needed,8,Some (1-2 orgs),Yes,Completed
+VOL-070,Hamid,Park,28,Hastings-Sunrise,English; Cantonese,Teaching/training; Research; First aid/CPR; Outreach/community engagement,Youth services; Senior services; Environment,Weekend afternoons,16,Some (1-2 orgs),Yes,In progress
+VOL-071,Lucas,Nasser,52,Hastings-Sunrise,English; Cantonese,Cooking/food prep; Mental health support; Graphic design; Arts facilitation,Education & literacy; Newcomer & immigrant support,Weekends only,8,None,No,Completed
+VOL-072,Nadia,O'Brien,54,Kerrisdale,English,Accounting/bookkeeping; Graphic design; Event coordination,Arts & culture; Newcomer & immigrant support; Food security,Weekday mornings,16,Experienced (3+ orgs),No,Not yet
+VOL-073,Ryan,Nakamura,69,Kerrisdale,English; Hindi,Teaching/training; Photography,Legal aid; Education & literacy; Animal welfare,Weekday evenings,4,Experienced (3+ orgs),No,Completed
+VOL-074,Samuel,Hassan,55,Kerrisdale,English; Spanish,Graphic design,Education & literacy; Arts & culture,Weekday evenings,8,None,No,In progress
+VOL-075,Zara,Wang,35,Hastings-Sunrise,English; Arabic,Graphic design; Legal knowledge; Administrative support; Social media,Housing & homelessness; Youth services,Weekend mornings,12,Experienced (3+ orgs),No,Completed
+VOL-076,Elena,Chen,34,Fairview,English; Punjabi,Cooking/food prep; Research; Legal knowledge; Photography,Arts & culture; Anti-poverty; Disability services,Flexible / as needed,4,Experienced (3+ orgs),No,Not yet
+VOL-077,Anaya,Rossi,57,Sunset,English; Cantonese,Accounting/bookkeeping; Graphic design; Arts facilitation; Elder care,Youth services,Weekday mornings,2,Some (1-2 orgs),No,Completed
+VOL-078,Chris,Singh,42,Point Grey,English; Farsi,Mental health support; Legal knowledge; Translation/interpretation; Elder care,Housing & homelessness; Anti-poverty; Environment,Weekdays only,8,None,No,Completed
+VOL-079,Nadia,Ivanova,24,Kerrisdale,English,Data entry; Childcare support; Photography,Housing & homelessness,Weekends only,4,Experienced (3+ orgs),No,Not yet
+VOL-080,Priya,Martinez,68,Oakridge,English; Hindi,Mental health support; Fundraising,Anti-poverty,Evenings only,8,Some (1-2 orgs),No,Completed
+VOL-081,Devi,Rivera,68,Shaughnessy,English,Translation/interpretation; Public speaking; Photography,Housing & homelessness,Weekday mornings,4,None,No,Completed
+VOL-082,David,Patel,29,Victoria-Fraserview,English; Mandarin,Legal knowledge; Elder care,Housing & homelessness; Education & literacy; Animal welfare,Weekends only,16,Experienced (3+ orgs),No,Completed
+VOL-083,Thomas,Thompson,57,Strathcona,English; Spanish; French,IT support; Arts facilitation; Event coordination,Environment,Weekdays only,12,Experienced (3+ orgs),No,In progress
+VOL-084,James,Osei,38,Shaughnessy,English; Spanish,Translation/interpretation,Women & gender equity; Disability services,Evenings only,8,Some (1-2 orgs),No,Completed
+VOL-085,Thomas,Nakamura,45,Riley Park,English; Punjabi,Elder care; IT support,Arts & culture,Flexible / as needed,16,Some (1-2 orgs),No,Completed
+VOL-086,David,Petrov,34,Kerrisdale,English; Spanish,Tutoring/mentorship; Elder care; Social media; Legal knowledge,Mental health; Legal aid; Youth services,Evenings only,2,Some (1-2 orgs),No,Completed
+VOL-087,Yuna,Mensah,40,Kitsilano,English; Mandarin,Teaching/training; Graphic design; Cooking/food prep,Women & gender equity,Evenings only,8,None,No,In progress
+VOL-088,Wei,Okonkwo,41,Riley Park,English; Arabic,Elder care; Public speaking,Women & gender equity; Disability services; Anti-poverty,Evenings only,2,Experienced (3+ orgs),No,Not yet
+VOL-089,Priya,Park,35,Marpole,English; French,Event coordination; Driving/transportation; Translation/interpretation,Disability services; Arts & culture; Housing & homelessness,Weekday evenings,2,None,No,Completed
+VOL-090,Rania,Tanaka,28,Kerrisdale,English; Korean,Mental health support; Teaching/training; Tutoring/mentorship,Youth services,Weekday evenings,2,Experienced (3+ orgs),No,Not yet
+VOL-091,Mina,Nakamura,46,Kitsilano,English; Arabic,Grant writing; Social media,Arts & culture; Housing & homelessness,Weekend afternoons,16,Some (1-2 orgs),No,Completed
+VOL-092,Ben,Martinez,18,Kensington-Cedar Cottage,English; Korean,Translation/interpretation; Photography,Mental health; Housing & homelessness,Weekday mornings,16,Experienced (3+ orgs),Yes,Completed
+VOL-093,Kofi,Thompson,50,Fairview,English; Farsi,Childcare support,Food security; Arts & culture; Animal welfare,Weekends only,4,Experienced (3+ orgs),No,Not yet
+VOL-094,Kofi,Mitchell,44,Marpole,English; Punjabi,Event coordination; Administrative support; Driving/transportation; Teaching/training,Anti-poverty; Education & literacy,Flexible / as needed,4,Some (1-2 orgs),Yes,Completed
+VOL-095,Elena,Andersen,23,Dunbar-Southlands,English; Korean,First aid/CPR; Administrative support; Driving/transportation,Indigenous community support,Weekday afternoons,20,Some (1-2 orgs),No,Completed
+VOL-096,Julia,Dubois,70,Renfrew-Collingwood,English; Hindi,Translation/interpretation,Senior services; Youth services,Weekday evenings,4,None,No,Completed
+VOL-097,Michael,Reyes,66,South Cambie,English; Mandarin; Cantonese,Arts facilitation; Administrative support; Translation/interpretation,Housing & homelessness; Environment,Weekends only,8,Experienced (3+ orgs),No,Completed
+VOL-098,James,Sharma,47,Point Grey,English; Mandarin,Cooking/food prep,Housing & homelessness; Disability services,Weekday afternoons,20,Some (1-2 orgs),No,In progress
+VOL-099,Nasrin,Hassan,46,South Cambie,English; Vietnamese,Teaching/training; Outreach/community engagement; Grant writing,Food security,Weekends only,4,Experienced (3+ orgs),No,In progress
+VOL-100,Aisha,Wang,59,Hastings-Sunrise,English; Mandarin,Accounting/bookkeeping; IT support,Indigenous community support; Animal welfare,Weekday evenings,8,Some (1-2 orgs),No,Completed
+VOL-101,Carmen,Nasser,56,Strathcona,English; French,Administrative support,Indigenous community support,Weekdays only,8,Some (1-2 orgs),No,In progress
+VOL-102,Ben,Rivera,39,Grandview-Woodland,English,Cooking/food prep; Graphic design,Education & literacy; Disability services; Arts & culture,Weekday evenings,4,Some (1-2 orgs),No,Not yet
+VOL-103,Marcus,Petrov,62,Downtown,English; Cantonese,Grant writing; Cooking/food prep; Event coordination; Graphic design,Senior services,Flexible / as needed,16,None,No,Completed
+VOL-104,Lucas,Nguyen,50,Fairview,English; Spanish; French,Research,Animal welfare; Legal aid,Weekday evenings,12,None,Yes,Not yet
+VOL-105,Linh,Al-Rashid,64,Point Grey,English; Mandarin,Cooking/food prep; Research; Legal knowledge; First aid/CPR,Women & gender equity; Newcomer & immigrant support,Weekends only,8,Some (1-2 orgs),No,In progress
+VOL-106,Alex,Williams,41,South Cambie,English; Mandarin; Cantonese,Graphic design; Childcare support; Grant writing; Elder care,Anti-poverty,Weekend mornings,4,Experienced (3+ orgs),Yes,Completed
+VOL-107,Ingrid,Okonkwo,24,Downtown,English; Punjabi,Tutoring/mentorship; Driving/transportation; Photography,Animal welfare; Indigenous community support,Weekday evenings,12,None,No,In progress
+VOL-108,Wei,Patel,44,Strathcona,English; Somali,First aid/CPR; Childcare support; Tutoring/mentorship,Senior services; Food security,Flexible / as needed,4,Experienced (3+ orgs),No,Not yet
+VOL-109,Marcus,Hassan,36,West End,English; Spanish,IT support; Teaching/training; Event coordination; Tutoring/mentorship,Newcomer & immigrant support,Weekend mornings,4,Some (1-2 orgs),No,Not yet
+VOL-110,Yuna,Ramachandran,36,Sunset,English; Korean,Data entry,Arts & culture,Weekends only,4,None,No,Not yet
+VOL-111,Priya,Mitchell,50,South Cambie,English; Hindi,Graphic design; Elder care,Women & gender equity,Flexible / as needed,8,Some (1-2 orgs),Yes,Not yet
+VOL-112,Zara,Ivanova,22,Downtown,English,Childcare support,Food security; Disability services,Weekdays only,8,Some (1-2 orgs),Yes,Not yet
+VOL-113,Wei,Yamamoto,64,Riley Park,English,Translation/interpretation; Data entry; Cooking/food prep,Mental health; Anti-poverty; Disability services,Weekday evenings,16,Experienced (3+ orgs),No,Completed
+VOL-114,Marcus,Kim,63,Point Grey,English; Mandarin,Fundraising; Data entry; Administrative support,Indigenous community support; Arts & culture,Evenings only,16,Some (1-2 orgs),No,Completed
+VOL-115,Wei,Ramachandran,21,Oakridge,English; Arabic,Cooking/food prep,Animal welfare; Arts & culture,Weekends only,12,Some (1-2 orgs),Yes,Not yet
+VOL-116,Ingrid,Andersen,35,Grandview-Woodland,English; Tigrinya,Elder care,Anti-poverty; Youth services; Indigenous community support,Weekend afternoons,8,None,No,Completed
+VOL-117,Samuel,Nakamura,63,Kitsilano,English; Tagalog,Cooking/food prep; IT support; Data entry; Legal knowledge,Women & gender equity; Arts & culture,Weekend afternoons,2,None,No,Completed
+VOL-118,Nasrin,Nasser,28,Mount Pleasant,English; Spanish,Data entry; Translation/interpretation; Tutoring/mentorship; First aid/CPR,Mental health; Animal welfare; Arts & culture,Weekday mornings,4,Experienced (3+ orgs),No,Completed
+VOL-119,Michael,Kim,54,Renfrew-Collingwood,English; Spanish; French,Childcare support; Administrative support; Arts facilitation,Senior services; Housing & homelessness,Weekday mornings,4,Some (1-2 orgs),No,Not yet
+VOL-120,Jason,Ramachandran,34,Point Grey,English; Vietnamese,Accounting/bookkeeping; Outreach/community engagement; Fundraising,Youth services,Weekday afternoons,16,None,No,In progress
+VOL-121,Hamid,Rossi,60,Kerrisdale,English; Cantonese,Graphic design; Driving/transportation; Accounting/bookkeeping,Animal welfare; Education & literacy; Disability services,Weekday evenings,8,Some (1-2 orgs),Yes,Completed
+VOL-122,Marcus,Yamamoto,68,West End,English,Public speaking; Mental health support; Cooking/food prep,Legal aid; Indigenous community support,Weekday evenings,4,None,No,Not yet
+VOL-123,Alex,Andersen,44,Kitsilano,English,Translation/interpretation,Disability services; Housing & homelessness,Weekends only,16,Experienced (3+ orgs),No,In progress
+VOL-124,Devi,Okonkwo,58,South Cambie,English; Tagalog,Elder care; Grant writing,Anti-poverty,Weekday afternoons,20,None,Yes,Completed
+VOL-125,Kofi,Thompson,40,Downtown,English; Korean,Photography,Disability services,Evenings only,8,None,No,Not yet
+VOL-126,Thomas,Dubois,28,South Cambie,English,Driving/transportation; Research,Education & literacy; Women & gender equity; Mental health,Weekday mornings,2,None,No,Not yet
+VOL-127,Jason,Dubois,31,South Cambie,English; Tigrinya,Outreach/community engagement,Indigenous community support; Newcomer & immigrant support; Disability services,Weekend afternoons,16,Some (1-2 orgs),No,Completed
+VOL-128,Rania,Kim,62,Strathcona,English; Tagalog,Elder care; Outreach/community engagement; IT support; Fundraising,Women & gender equity; Youth services,Flexible / as needed,8,Experienced (3+ orgs),No,In progress
+VOL-129,Marcus,Scott,41,Downtown,English,Administrative support,Environment,Weekday afternoons,8,Some (1-2 orgs),Yes,Completed
+VOL-130,Mohammed,Tran,44,Sunset,English; Tagalog,Mental health support; Legal knowledge; Administrative support,Legal aid,Weekday evenings,16,Experienced (3+ orgs),No,In progress
+VOL-131,Mina,Patel,23,Dunbar-Southlands,English; Spanish; French,First aid/CPR; Fundraising; Mental health support; Cooking/food prep,Food security,Weekend afternoons,16,Some (1-2 orgs),No,Not yet
+VOL-132,Lucas,Haddad,18,Riley Park,English; Tigrinya,Photography; Legal knowledge,Legal aid; Arts & culture,Flexible / as needed,2,Some (1-2 orgs),No,Completed
+VOL-133,Anaya,Li,22,Dunbar-Southlands,English; Spanish; French,Public speaking; Photography; Teaching/training; Research,Housing & homelessness; Youth services; Animal welfare,Weekdays only,8,Experienced (3+ orgs),No,In progress
+VOL-134,Michael,Rivera,30,Shaughnessy,English; Spanish; French,Grant writing; Data entry; Translation/interpretation; Accounting/bookkeeping,Legal aid; Environment,Evenings only,16,None,No,Completed
+VOL-135,Linh,Rossi,28,Dunbar-Southlands,English,Mental health support; Administrative support; Grant writing,Indigenous community support; Environment; Education & literacy,Weekend afternoons,16,Experienced (3+ orgs),No,Not yet
+VOL-136,Patrick,Fialoa,37,Mount Pleasant,English,Photography; Arts facilitation; Mental health support; First aid/CPR,Food security; Women & gender equity; Environment,Weekday evenings,20,Experienced (3+ orgs),No,In progress
+VOL-137,Leila,Nasser,33,Strathcona,English,Fundraising,Environment,Flexible / as needed,12,None,No,Completed
+VOL-138,Devi,Tran,48,Strathcona,English; Spanish,Public speaking; Administrative support,Environment; Indigenous community support; Arts & culture,Flexible / as needed,4,Some (1-2 orgs),No,Not yet
+VOL-139,Hamid,Ramachandran,64,Victoria-Fraserview,English,Fundraising; First aid/CPR; Photography; Public speaking,Senior services; Newcomer & immigrant support,Weekend afternoons,8,Experienced (3+ orgs),No,Completed
+VOL-140,Anaya,Souza,35,Marpole,English; Punjabi,Childcare support; Cooking/food prep; Translation/interpretation; Graphic design,Newcomer & immigrant support,Weekday afternoons,8,Experienced (3+ orgs),No,Not yet
+VOL-141,Fatima,Williams,70,Fairview,English; Arabic,Translation/interpretation; Social media; Teaching/training,Women & gender equity; Senior services; Anti-poverty,Weekday mornings,20,Some (1-2 orgs),Yes,Completed
+VOL-142,Carmen,Asante,48,Riley Park,English; Spanish,Public speaking,Arts & culture,Weekends only,16,Experienced (3+ orgs),No,Completed
+VOL-143,Lucas,Dubois,21,Grandview-Woodland,English,Public speaking; Legal knowledge,Anti-poverty; Food security; Youth services,Weekdays only,4,Experienced (3+ orgs),Yes,In progress
+VOL-144,Mina,Park,65,Marpole,English; Mandarin,Graphic design,Women & gender equity; Housing & homelessness; Mental health,Weekend afternoons,16,Experienced (3+ orgs),No,Completed
+VOL-145,Marcus,Wang,47,Victoria-Fraserview,English; Vietnamese,Administrative support,Education & literacy,Weekends only,8,Experienced (3+ orgs),Yes,Completed
+VOL-146,Lucas,Reyes,61,Kensington-Cedar Cottage,English; Tagalog,Elder care; Grant writing; Administrative support; Tutoring/mentorship,Disability services; Housing & homelessness,Weekday evenings,4,Some (1-2 orgs),No,Completed
+VOL-147,Mohammed,Yamamoto,46,Victoria-Fraserview,English; French,Mental health support; Legal knowledge; Event coordination,Disability services; Mental health,Weekend mornings,2,Experienced (3+ orgs),No,Completed
+VOL-148,Hamid,Wang,63,Marpole,English; Punjabi,Cooking/food prep; Teaching/training; First aid/CPR,Youth services,Weekends only,4,Some (1-2 orgs),No,Completed
+VOL-149,Sarah,Okonkwo,48,Fairview,English; Vietnamese,Research; Teaching/training,Indigenous community support,Weekends only,20,Experienced (3+ orgs),Yes,Not yet
+VOL-150,Sofia,Okonkwo,50,Kensington-Cedar Cottage,English,Driving/transportation; Administrative support,Environment; Housing & homelessness; Disability services,Weekend mornings,16,None,No,In progress

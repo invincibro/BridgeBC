@@ -14,17 +14,15 @@ CREATE TABLE volunteers (
   prior_volunteer_experience VARCHAR(50) CHECK (prior_volunteer_experience IN (
                                'None',
                                'Some (1-2 orgs)',
-                               'Moderate (3-5 orgs)',
-                               'Extensive (6+ orgs)'
+                               'Experienced (3+ orgs)'
                              )),
   has_vehicle              BOOLEAN      NOT NULL DEFAULT FALSE,
   background_check_status  VARCHAR(20)  NOT NULL DEFAULT 'Pending'
                                         CHECK (background_check_status IN (
-                                          'Pending',
-                                          'In Progress',
+                                          
+                                          'In progress',
                                           'Completed',
-                                          'Failed',
-                                          'Expired'
+                                          'Not yet'
                                         )),
   created_at               TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at               TIMESTAMPTZ  NOT NULL DEFAULT NOW()
@@ -35,17 +33,3 @@ CREATE INDEX idx_volunteers_neighbourhood ON volunteers (neighbourhood);
 CREATE INDEX idx_volunteers_bg_status     ON volunteers (background_check_status);
 CREATE INDEX idx_volunteers_availability  ON volunteers (availability);
 
--- Seed row from sample data
-INSERT INTO volunteers (
-  volunteer_id, first_name, last_name, age, neighbourhood,
-  languages_spoken, skills, cause_areas_of_interest,
-  availability, hours_available_per_month,
-  prior_volunteer_experience, has_vehicle, background_check_status
-) VALUES (
-  'VOL-001', 'Grace', 'Johannsen', 19, 'Victoria-Fraserview',
-  ARRAY['English', 'Hindi'],
-  ARRAY['Translation/interpretation', 'Legal knowledge'],
-  ARRAY['Disability services'],
-  'Evenings only', 4,
-  'Some (1-2 orgs)', TRUE, 'Completed'
-);
