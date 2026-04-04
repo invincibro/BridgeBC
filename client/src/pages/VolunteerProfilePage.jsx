@@ -34,7 +34,7 @@ function VolunteerProfilePage() {
       <SectionHeader
         eyebrow="Volunteer profile"
         title={volunteer.name}
-        description={`${volunteer.neighbourhood} • ${volunteer.background_check_status}`}
+        description={`${volunteer.location} • ${volunteer.status}`}
       />
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
@@ -47,6 +47,10 @@ function VolunteerProfilePage() {
                   <Badge key={skill}>{skill}</Badge>
                 ))}
               </div>
+            </div>
+            <div>
+              <p className="font-medium text-slate-500">Age</p>
+              <p className="mt-2">{volunteer.age || 'Not provided'}</p>
             </div>
             <div>
               <p className="font-medium text-slate-500">Age</p>

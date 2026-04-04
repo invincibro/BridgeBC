@@ -1,11 +1,17 @@
 const express = require("express");
+const cors = require("cors");
 const { Pool } = require("pg");
+const { scoreJob } = require("./scorer/scoreJob");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
+app.use(cors({ origin: "http://localhost:5173" }));
+app.use(express.json());
+
+// --- Health ---
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -39,6 +45,7 @@ function buildTaskTitle(row) {
 function normalizeTask(row) {
   const organization = normalizeOrganization(row);
   const primarySkill = row.skills_needed?.[0] || "";
+  const primarySkill = row.skills_needed?.[0] || "";
 
   return {
     id: `org-task-${row.id}`,
@@ -63,9 +70,9 @@ function normalizeTask(row) {
 function normalizeVolunteer(row) {
   const availabilityOptions = row.availability
     ? row.availability
-        .split(";")
-        .map((item) => item.trim())
-        .filter(Boolean)
+      .split(";")
+      .map((item) => item.trim())
+      .filter(Boolean)
     : [];
 
   return {
@@ -126,17 +133,102 @@ app.get("/health", async (req, res) => {
   }
 });
 
-app.get("/api/organizations", async (req, res) => {
+// --- Volunteers ---
+app.get("/api/volunteers", async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM volunteers ORDER BY volunteer_id");
+    res.json(rows.map(normalizeVolunteer));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+})
+
+app.get("/api/volunteers/:id", async (req, res) => {
   try {
     const { rows } = await pool.query(
-      `SELECT id, bn, legal_name, account_name, address1, address2, city, province, postal_code, country, sector, org_size
-       FROM organizations
-       ORDER BY id DESC`
+      "SELECT * FROM volunteers WHERE volunteer_id = $1",
+      [req.params.id]
+    );
+    if (rows.length === 0) return res.status(404).json({ message: "Volunteer not found" });
+
+    res.json(normalizeVolunteer(rows[0]));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+app.post("/api/volunteers", async (req, res) => {
+  const {
+    first_name,
+    last_name,
+    neighbourhood,
+    languages_spoken,
+    skills,
+    interests,
+    availability,
+    hours_available_per_month,
+    experience_level,
+    has_vehicle,
+    background_check_status,
+  } = req.body;
+
+  if (!first_name || !last_name) {
+    return res.status(400).json({ message: "first_name and last_name are required." });
+  }
+
+  try {
+    const nextIdResult = await pool.query(
+      `SELECT CONCAT('VOL-', LPAD(COALESCE(MAX(id), 0)::text, 3, '0')) AS current_code,
+              COALESCE(MAX(id), 0) + 1 AS next_number
+       FROM volunteers`
     );
 
-    res.json(rows.map(normalizeOrganization));
+    const volunteerCode = `VOL-${String(nextIdResult.rows[0].next_number).padStart(3, "0")}`;
+
+    const { rows } = await pool.query(
+      `INSERT INTO volunteers (
+        volunteer_id, first_name, last_name, neighbourhood, languages_spoken, skills,
+        cause_areas_of_interest, availability, hours_available_per_month,
+        prior_volunteer_experience, has_vehicle, background_check_status
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      RETURNING volunteer_id, first_name, last_name, neighbourhood, languages_spoken,
+                skills, cause_areas_of_interest, availability, hours_available_per_month,
+                prior_volunteer_experience, has_vehicle, background_check_status`,
+      [
+        volunteerCode,
+        first_name,
+        last_name,
+        neighbourhood || null,
+        languages_spoken || [],
+        skills || [],
+        interests || [],
+        Array.isArray(availability) ? availability.join("; ") : availability || null,
+        Number(hours_available_per_month || 0),
+        mapVolunteerExperience(experience_level),
+        Boolean(has_vehicle),
+        mapBackgroundStatus(background_check_status),
+      ]
+    );
+
+    res.status(201).json(normalizeVolunteer(rows[0]));
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+
+
+
+
+
+// --- Organizations ---
+
+
+app.get("/api/organizations", async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM organizations ORDER BY legal_name");
+    res.json(rows.map(normalizeOrganization));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -158,33 +250,31 @@ app.post("/api/organizations", async (req, res) => {
   if (!BN || !legal_name) {
     return res.status(400).json({ message: "BN and legal_name are required." });
   }
+});
 
+
+// --- Recommended organizations for a volunteer ---
+app.get("/api/volunteers/:id/recommended-organizations", async (req, res) => {
   try {
-    const { rows } = await pool.query(
-      `INSERT INTO organizations (
-        bn, legal_name, account_name, address1, address2, city, province, postal_code, country, sector, org_size
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-      RETURNING id, bn, legal_name, account_name, address1, address2, city, province, postal_code, country, sector, org_size`,
-      [
-        BN,
-        legal_name,
-        account_name || null,
-        address1 || null,
-        address2 || null,
-        city || null,
-        province || null,
-        postal_code || null,
-        country || null,
-        sector || null,
-        org_size || null,
-      ]
+    const { rows: volunteers } = await pool.query(
+      "SELECT * FROM volunteers WHERE volunteer_id = $1",
+      [req.params.id]
     );
+    if (volunteers.length === 0) return res.status(404).json({ message: "Volunteer not found" });
 
-    res.status(201).json(normalizeOrganization(rows[0]));
+    const volunteer = volunteers[0];
+    const { rows: organizations } = await pool.query("SELECT * FROM organizations");
+
+    const ranked = organizations
+      .map((org) => ({ ...org, score: scoreJob(volunteer, org) }))
+      .sort((a, b) => b.score - a.score);
+
+    res.json(ranked);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
+
 
 app.get("/api/tasks", async (req, res) => {
   try {
