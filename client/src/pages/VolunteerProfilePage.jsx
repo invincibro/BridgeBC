@@ -216,10 +216,10 @@ function VolunteerProfilePage() {
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {normalizeList(organization.skills_needed).map((skill) => (
-                    <Badge key={skill} tone="info">{skill}</Badge>
+                    <Badge key={skill}>{skill}</Badge>
                   ))}
                   {normalizeList(organization.languages_needed).map((language) => (
-                    <Badge key={language}>{language}</Badge>
+                    <Badge key={language}  tone="info">{language}</Badge>
                   ))}
                 </div>
               </div>
