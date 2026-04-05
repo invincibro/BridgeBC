@@ -1,20 +1,29 @@
-import { useEffect, useState } from 'react'
-import Badge from '../components/Badge.jsx'
+import { useEffect, useMemo, useState } from 'react'
 import Card from '../components/Card.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
 import { getOrganizations } from '../services/api.js'
 
+const urgencyOptions = ['All', 'Critical', 'High', 'Medium', 'Low']
+
 function NonprofitDashboardPage() {
   const [roles, setRoles] = useState([])
+  const [selectedUrgency, setSelectedUrgency] = useState('All')
 
   useEffect(() => {
     getOrganizations().then(setRoles).catch(() => setRoles([]))
   }, [])
 
+  const filteredRoles = useMemo(() => {
+    if (selectedUrgency === 'All') {
+      return roles
+    }
+
+    return roles.filter((role) => (role.volunteer_urgency || 'Low') === selectedUrgency)
+  }, [roles, selectedUrgency])
+
   const highUrgencyCount = roles.filter(
     (task) => task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical',
   ).length
-
   return (
     <>
       <SectionHeader
@@ -44,50 +53,64 @@ function NonprofitDashboardPage() {
         title="Non-profit that needs your help"
       />
       <section>
-        <Card >
+        <Card>
+          <div className="mb-5 flex flex-wrap gap-2">
+            {urgencyOptions.map((urgency) => {
+              const isActive = urgency === selectedUrgency
+
+              return (
+                <button
+                  key={urgency}
+                  type="button"
+                  onClick={() => setSelectedUrgency(urgency)}
+                  className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                    isActive
+                      ? 'border-pine bg-pine text-white'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-moss hover:text-pine'
+                  }`}
+                >
+                  {urgency}
+                </button>
+              )
+            })}
+          </div>
+
           <div className="space-y-4">
-            {roles.map((role) => (
+            {filteredRoles.map((role) => (
               <div key={role.id} className="rounded-2xl border border-slate-100 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-pine">{role.account_name || role.legal_name}</p>
-                    <p className="text-sm text-slate-500">
-                      <strong>Skills:</strong> {role.skills_needed?.join(', ')} •{' '}
-                      <strong>Availability:</strong> {role.availability_preference || role.schedule}
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      <strong>Volunteers Needed:</strong> {role.volunteers_currently_needed || 0} •{' '}
-                      <strong>Sector:</strong> {role.sector || 'N/A'} •{' '}
-                      <strong>Org Size:</strong> {role.org_size || 'N/A'}
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      <strong>Languages:</strong> {role.languages_needed?.join(', ') || 'Any'} •{' '}
-                      <strong>Background Check:</strong> {role.background_check_required ? 'Yes' : 'No'}
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      <strong>Availability Times:</strong>
-                      {role.weekday_morning && ' Weekday Morning,'}
-                      {role.weekday_afternoon && ' Weekday Afternoon,'}
-                      {role.weekday_evening && ' Weekday Evening,'}
-                      {role.weekend_morning && ' Weekend Morning,'}
-                      {role.weekend_afternoon && ' Weekend Afternoon,'}
-                      {role.weekend_evening && ' Weekend Evening'}
-                    </p>
-                  </div>
-                  <Badge
-                    tone={
-                      role.volunteer_urgency === 'High' || role.volunteer_urgency === 'Critical'
-                        ? 'danger'
-                        : role.volunteer_urgency === 'Medium'
-                          ? 'warning'
-                          : 'default'
-                    }
-                  >
-                    {role.volunteer_urgency || 'Low'}
-                  </Badge>
+                <div>
+                  <p className="font-semibold text-pine">{role.account_name || role.legal_name}</p>
+                  <p className="text-sm text-slate-500">
+                    <strong>Skills:</strong> {role.skills_needed?.join(', ')} •{' '}
+                    <strong>Availability:</strong> {role.availability_preference || role.schedule}
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    <strong>Volunteers Needed:</strong> {role.volunteers_currently_needed || 0} •{' '}
+                    <strong>Sector:</strong> {role.sector || 'N/A'} •{' '}
+                    <strong>Org Size:</strong> {role.org_size || 'N/A'}
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    <strong>Languages:</strong> {role.languages_needed?.join(', ') || 'Any'} •{' '}
+                    <strong>Background Check:</strong> {role.background_check_required ? 'Yes' : 'No'}
+                  </p>
+                  <p className="text-sm text-slate-500">
+                    <strong>Availability Times:</strong>
+                    {role.weekday_morning && ' Weekday Morning,'}
+                    {role.weekday_afternoon && ' Weekday Afternoon,'}
+                    {role.weekday_evening && ' Weekday Evening,'}
+                    {role.weekend_morning && ' Weekend Morning,'}
+                    {role.weekend_afternoon && ' Weekend Afternoon,'}
+                    {role.weekend_evening && ' Weekend Evening'}
+                  </p>
                 </div>
               </div>
             ))}
+
+            {!filteredRoles.length && (
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                No volunteer opportunities are marked {selectedUrgency.toLowerCase()} right now.
+              </div>
+            )}
           </div>
         </Card>
       </section>
