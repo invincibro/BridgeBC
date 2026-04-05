@@ -5,7 +5,6 @@ import LandingPage from './pages/LandingPage.jsx'
 import NonprofitDashboardPage from './pages/NonprofitDashboardPage.jsx'
 import OrganizationFormPage from './pages/OrganizationFormPage.jsx'
 import VolunteerIntakePage from './pages/VolunteerIntakePage.jsx'
-import VolunteerMatchPage from './pages/VolunteerMatchPage.jsx'
 import VolunteerProfilePage from './pages/VolunteerProfilePage.jsx'
 
 function App() {
