@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Card from '../components/Card.jsx'
 import FormField from '../components/FormField.jsx'
-import { SelectInput, TextInput } from '../components/FormControls.jsx'
+import { SelectInput, TextInput, TogglePillGroup } from '../components/FormControls.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
-import { createOrganization, getOrganizations } from '../services/api.js'
+import { toggleListValue } from '../lib/forms.js'
+import { createOrganization } from '../services/api.js'
 
 const orgSizeOptions = [
   'Micro (1-5 staff)',
@@ -13,6 +14,43 @@ const orgSizeOptions = [
 ]
 const provinceOptions = ['BC', 'AB', 'ON', 'QC', 'NS', 'NB', 'PE', 'NL', 'SK', 'MB', 'YT', 'NT', 'NU']
 const countryOptions = ['CA', 'US']
+const urgencyOptions = ['Low', 'Medium', 'High', 'Critical']
+const languageOptions = ['English', 'French', 'Cantonese', 'Mandarin', 'Punjabi', 'Hindi', 'Tagalog']
+const skillOptions = [
+  'Tutoring/mentorship',
+  'Event coordination',
+  'Arts facilitation',
+  'Childcare support',
+  'Driving/transportation',
+  'Cooking/food prep',
+  'Administrative support',
+  'Mental health support',
+  'Outreach/community engagement',
+  'Translation/interpretation',
+  'Data entry',
+  'Social media',
+  'Photography',
+  'Grant writing',
+  'First aid/CPR',
+  'Elder care',
+  'Teaching/training',
+]
+const availabilityPreferenceOptions = [
+  'Weekdays preferred',
+  'Weekday mornings',
+  'Weekday afternoons',
+  'Weekday evenings',
+  'Weekends',
+  'Flexible',
+]
+const timeSlotOptions = [
+  { field: 'weekday_morning', label: 'Weekday morning' },
+  { field: 'weekday_afternoon', label: 'Weekday afternoon' },
+  { field: 'weekday_evening', label: 'Weekday evening' },
+  { field: 'weekend_morning', label: 'Weekend morning' },
+  { field: 'weekend_afternoon', label: 'Weekend afternoon' },
+  { field: 'weekend_evening', label: 'Weekend evening' },
+]
 
 const initialForm = {
   BN: '',
@@ -26,24 +64,37 @@ const initialForm = {
   postal_code: '',
   country: 'CA',
   org_size: 'Small (6-15 staff)',
+  volunteers_currently_needed: 1,
+  volunteer_urgency: 'Medium',
+  skills_needed: [],
+  languages_needed: ['English'],
+  availability_preference: 'Weekdays preferred',
+  background_check_required: false,
+  weekday_morning: false,
+  weekday_afternoon: false,
+  weekday_evening: false,
+  weekend_morning: false,
+  weekend_afternoon: false,
+  weekend_evening: false,
 }
 
 function OrganizationFormPage() {
   const [form, setForm] = useState(initialForm)
-  const [organizations, setOrganizations] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [createdOrganization, setCreatedOrganization] = useState(null)
 
-  useEffect(() => {
-    getOrganizations().then(setOrganizations).catch(() => setOrganizations([]))
-  }, [])
-
   function updateField(field) {
     return (event) => {
+      const value =
+        event.target.type === 'checkbox' ? event.target.checked : event.target.value
+
       setForm((current) => ({
         ...current,
-        [field]: event.target.value,
+        [field]:
+          field === 'volunteers_currently_needed'
+            ? Number(value)
+            : value,
       }))
     }
   }
@@ -56,7 +107,6 @@ function OrganizationFormPage() {
     try {
       const organization = await createOrganization(form)
       setCreatedOrganization(organization)
-      setOrganizations((current) => [organization, ...current])
       setForm(initialForm)
     } catch (submitError) {
       setError(submitError.message)
@@ -68,14 +118,14 @@ function OrganizationFormPage() {
   return (
     <>
       <SectionHeader
-        eyebrow="Organization profile"
-        title="Store organization details once, then create volunteer needs separately."
-        description="This form now matches the organization table much more closely, including BN and full address fields that belong to the nonprofit record."
+        eyebrow="Organization setup"
+        title="Create the nonprofit record and current volunteer need in one form."
+        description="This page now matches your current organizations table, which stores both nonprofit profile fields and the active volunteer need fields in the same row."
       />
 
       <section className="mx-auto w-full max-w-4xl">
         <div className="space-y-6">
-          <Card title="Profile form" subtitle="Save the core organization record here. Volunteer need details should live on task postings.">
+          <Card title="Organization and need form" subtitle="Because your SQL keeps profile fields and current need fields together, this form saves both at once.">
             <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
               <FormField
                 label="Business number (BN)"
@@ -189,11 +239,116 @@ function OrganizationFormPage() {
                   options={countryOptions}
                 />
               </FormField>
+              <div className="md:col-span-2 mt-2 border-t border-slate-200 pt-6">
+                <h3 className="text-xl font-semibold text-pine">Current volunteer need</h3>
+                <p className="mt-1 text-sm text-slate-500">
+                  These fields are stored on the same `organizations` row in your current schema.
+                </p>
+              </div>
+              <FormField
+                label="Number of volunteers currently needed"
+                htmlFor="volunteers_currently_needed"
+              >
+                <TextInput
+                  id="volunteers_currently_needed"
+                  type="number"
+                  value={form.volunteers_currently_needed}
+                  onChange={updateField('volunteers_currently_needed')}
+                />
+              </FormField>
+              <FormField label="Volunteer urgency" htmlFor="volunteer_urgency">
+                <SelectInput
+                  id="volunteer_urgency"
+                  value={form.volunteer_urgency}
+                  onChange={updateField('volunteer_urgency')}
+                  options={urgencyOptions}
+                />
+              </FormField>
+              <div className="md:col-span-2">
+                <FormField label="Skills needed" htmlFor="skills_needed">
+                  <TogglePillGroup
+                    options={skillOptions}
+                    selected={form.skills_needed}
+                    onToggle={(option) =>
+                      setForm((current) => ({
+                        ...current,
+                        skills_needed: toggleListValue(current.skills_needed, option),
+                      }))
+                    }
+                  />
+                </FormField>
+              </div>
+              <div className="md:col-span-2">
+                <FormField label="Languages needed" htmlFor="languages_needed">
+                  <TogglePillGroup
+                    options={languageOptions}
+                    selected={form.languages_needed}
+                    onToggle={(option) =>
+                      setForm((current) => ({
+                        ...current,
+                        languages_needed: toggleListValue(current.languages_needed, option),
+                      }))
+                    }
+                  />
+                </FormField>
+              </div>
+              <FormField label="Availability preference" htmlFor="availability_preference">
+                <SelectInput
+                  id="availability_preference"
+                  value={form.availability_preference}
+                  onChange={updateField('availability_preference')}
+                  options={availabilityPreferenceOptions}
+                />
+              </FormField>
+              <div className="md:col-span-2">
+                <FormField
+                  label="Preferred volunteer time slots"
+                  htmlFor="weekday_morning"
+                  hint="Use the exact weekday/weekend boolean slots from your SQL."
+                >
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {timeSlotOptions.map((option) => (
+                      <label
+                        key={option.field}
+                        className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                          form[option.field]
+                            ? 'border-pine bg-sky'
+                            : 'border-slate-200 bg-white hover:border-moss'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={form[option.field]}
+                          onChange={updateField(option.field)}
+                          className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                        />
+                        <span className="text-sm font-medium text-slate-700">{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </FormField>
+              </div>
+              <div className="md:col-span-2">
+                <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-sand px-4 py-4">
+                  <input
+                    type="checkbox"
+                    checked={form.background_check_required}
+                    onChange={updateField('background_check_required')}
+                    className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                  />
+                  <div>
+                    <p className="font-medium text-pine">Background check required</p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Keep this on the organization row for now because the current SQL stores it there.
+                    </p>
+                  </div>
+                </label>
+              </div>
               {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
               {createdOrganization && (
                 <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
                   Saved <span className="font-semibold">{createdOrganization.org_name}</span> with
-                  the full organization record. You can now create tasks under this organization.
+                  the organization details and current volunteer need.
                 </div>
               )}
               <div className="md:col-span-2 flex justify-end">
@@ -202,7 +357,7 @@ function OrganizationFormPage() {
                   disabled={saving}
                   className="rounded-full bg-pine px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#23473d] disabled:cursor-not-allowed disabled:opacity-70"
                 >
-                  {saving ? 'Saving profile...' : 'Save organization profile'}
+                  {saving ? 'Saving organization...' : 'Save organization and current need'}
                 </button>
               </div>
             </form>

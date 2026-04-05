@@ -19,7 +19,7 @@ function LandingPage() {
   const filteredRoles = useMemo(() => {
     const query = search.toLowerCase()
 
-    return tasks.filter((task) => {
+    return roles.filter((task) => {
       const fields = [
         task.task_title,
         task.organization?.org_name || '',
@@ -82,23 +82,23 @@ function LandingPage() {
                   <div key={role.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-pine">{role.title}</p>
+                        <p className="font-semibold text-pine">{role.task_title || role.title}</p>
                         <p className="text-sm text-slate-600">
-                          {role.nonprofit} • {role.location}
+                          {role.organization?.org_name || role.nonprofit} • {role.organization?.city || role.location}
                         </p>
                       </div>
                       <Badge
                         tone={
-                          task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical'
+                          role.volunteer_urgency === 'High' || role.volunteer_urgency === 'Critical'
                             ? 'danger'
                             : 'warning'
                         }
                       >
-                        {task.volunteer_urgency} urgency
+                        {role.volunteer_urgency || 'Medium'} urgency
                       </Badge>
                     </div>
                     <p className="mt-3 text-sm">
-                      {task.task_category} • {task.availability_preference}
+                      {role.task_category} • {role.availability_preference}
                     </p>
                   </div>
                 ))}

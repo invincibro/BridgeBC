@@ -244,6 +244,18 @@ app.post("/api/organizations", async (req, res) => {
     country,
     sector,
     org_size,
+    volunteers_currently_needed,
+    volunteer_urgency,
+    skills_needed,
+    languages_needed,
+    availability_preference,
+    background_check_required,
+    weekday_morning,
+    weekday_afternoon,
+    weekday_evening,
+    weekend_morning,
+    weekend_afternoon,
+    weekend_evening,
   } = req.body;
 
   if (!BN || !legal_name) {
@@ -254,8 +266,12 @@ app.post("/api/organizations", async (req, res) => {
     const { rows } = await pool.query(
       `INSERT INTO organizations (
         bn, legal_name, account_name, address1, address2, city,
-        province, postal_code, country, sector, org_size
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
+        province, postal_code, country, sector, org_size,
+        volunteers_currently_needed, volunteer_urgency, skills_needed, languages_needed,
+        availability_preference, background_check_required,
+        weekday_morning, weekday_afternoon, weekday_evening,
+        weekend_morning, weekend_afternoon, weekend_evening
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)
       RETURNING *`,
       [
         BN,
@@ -269,6 +285,18 @@ app.post("/api/organizations", async (req, res) => {
         country || null,
         sector || null,
         org_size || null,
+        Number(volunteers_currently_needed || 1),
+        volunteer_urgency || null,
+        skills_needed || [],
+        languages_needed || [],
+        availability_preference || null,
+        Boolean(background_check_required),
+        Boolean(weekday_morning),
+        Boolean(weekday_afternoon),
+        Boolean(weekday_evening),
+        Boolean(weekend_morning),
+        Boolean(weekend_afternoon),
+        Boolean(weekend_evening),
       ]
     );
 

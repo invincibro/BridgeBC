@@ -19,7 +19,7 @@ function NonprofitDashboardPage() {
     [roles],
   )
 
-  const highUrgencyCount = openTasks.filter(
+  const highUrgencyCount = openRoles.filter(
     (task) => task.volunteer_urgency === 'High' || task.volunteer_urgency === 'Critical',
   ).length
   const continuityAlerts = notes.filter((note) => note.alertLevel !== 'Low')
@@ -54,16 +54,16 @@ function NonprofitDashboardPage() {
               <div key={role.id} className="rounded-2xl border border-slate-100 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-pine">{role.title}</p>
+                    <p className="font-semibold text-pine">{role.task_title || role.title}</p>
                     <p className="text-sm text-slate-500">
-                      {role.nonprofit} • {role.schedule}
+                      {role.organization?.org_name || role.nonprofit} • {role.availability_preference || role.schedule}
                     </p>
                   </div>
-                  <Badge tone={role.urgency === 'High' ? 'danger' : 'warning'}>
-                    {role.urgency}
+                  <Badge tone={role.volunteer_urgency === 'High' || role.volunteer_urgency === 'Critical' ? 'danger' : 'warning'}>
+                    {role.volunteer_urgency || 'Medium'}
                   </Badge>
                 </div>
-                <p className="mt-3 text-sm">{role.description}</p>
+                <p className="mt-3 text-sm">{role.task_description || role.description}</p>
               </div>
             ))}
           </div>

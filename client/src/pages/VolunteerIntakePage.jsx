@@ -39,14 +39,12 @@ const interestOptions = [
   'Senior services',
 ]
 const availabilityOptions = [
-  'Evenings only',
-  'Weekends only',
-  'Weekday afternoons',
-  'Flexible / as needed',
-  'Weekday evenings',
   'Weekday mornings',
+  'Weekday afternoons',
+  'Weekday evenings',
   'Weekend mornings',
   'Weekend afternoons',
+  'Weekend evenings',
 ]
 const experienceOptions = ['None', 'Some (1-2 orgs)', 'Experienced (3+ orgs)']
 const backgroundStatusOptions = ['Not yet', 'In progress', 'Completed']
@@ -59,7 +57,7 @@ const initialForm = {
   languages_spoken: ['English'],
   skills: [],
   cause_areas_of_interest: [],
-  availability: 'Evenings only',
+  availability: [],
   hours_available_per_month: 4,
   prior_volunteer_experience: 'Some (1-2 orgs)',
   has_vehicle: false,
@@ -206,14 +204,44 @@ function VolunteerIntakePage() {
                 />
               </FormField>
             </div>
-            <FormField label="Availability" htmlFor="availability" required>
-              <SelectInput
-                id="availability"
-                value={form.availability}
-                onChange={updateField('availability')}
-                options={availabilityOptions}
-              />
-            </FormField>
+            <div className="md:col-span-2">
+              <FormField
+                label="Availability preference"
+                htmlFor="availability"
+                required
+                hint="Choose all time slots that usually work for this volunteer."
+              >
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {availabilityOptions.map((option) => {
+                    const checked = form.availability.includes(option)
+
+                    return (
+                      <label
+                        key={option}
+                        className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                          checked
+                            ? 'border-pine bg-sky'
+                            : 'border-slate-200 bg-white hover:border-moss'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() =>
+                            setForm((current) => ({
+                              ...current,
+                              availability: toggleListValue(current.availability, option),
+                            }))
+                          }
+                          className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                        />
+                        <span className="text-sm font-medium text-slate-700">{option}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </FormField>
+            </div>
             <FormField label="Prior volunteer experience" htmlFor="prior_volunteer_experience">
               <SelectInput
                 id="prior_volunteer_experience"
