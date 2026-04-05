@@ -415,8 +415,8 @@ function VolunteerProfilePage() {
                             {organization.sector || 'Community support'}
                           </p>
                         </div>
-                        <div className="rounded-full bg-white px-3 py-2 text-right shadow-sm">
-                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-moss">
+                        <div className="flex flex-col justify-center items-center rounded-full bg-white px-4 py-2 whitespace-nowrap shadow-sm">
+                          <p className="text-xs font-semibold uppercase text-moss">
                             {getScoreLabel(score)}
                           </p>
                           <p className="mt-1 text-lg font-semibold text-pine">
@@ -468,7 +468,7 @@ function VolunteerProfilePage() {
                             {similarVolunteer.neighbourhood || 'Neighbourhood not listed'}
                           </p>
                         </div>
-                        <div className="rounded-full bg-sand px-3 py-2 text-right">
+                        <div className="flex flex-col justify-center items-center rounded-full bg-sand px-4 py-2 whitespace-nowrap shadow-sm">
                           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss">
                             {getSimilarityLabel(similarityScore)}
                           </p>

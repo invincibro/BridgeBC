@@ -140,7 +140,7 @@ function OrganizationFormPage() {
         title="Organization setup"
       />
 
-      <section className="mx-auto w-full max-w-4xl">
+      <section >
         <Card title="Organization setup">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
             <div className="md:col-span-2">

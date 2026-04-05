@@ -1,7 +1,7 @@
 // Card is a small reusable panel wrapper for metrics, lists, and summaries.
 function Card({ title, subtitle, children, className = '' }) {
   return (
-    <section className={`panel p-7 ${className}`}>
+    <section className={`panel p-7 ${className} mt-4`}>
       {(title || subtitle) && (
         <div className="mb-5">
           {title && <h3 className="text-xl font-semibold text-[#2F3E46]">{title}</h3>}

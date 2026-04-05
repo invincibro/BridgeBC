@@ -62,7 +62,7 @@ function LandingPage() {
               sense.
             </p>
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+            <div >
               <Card title="For nonprofits">
                 <p>
                   Set up your organization once, then describe the volunteer support you need
@@ -84,64 +84,7 @@ function LandingPage() {
             </div>
           </div>
 
-          <Card
-            title="Explore current community needs"
-            subtitle="Search the opportunities already available in the app."
-            className="self-start"
-          >
-            <label className="text-sm font-medium text-[#54636b]" htmlFor="role-search">
-              Search by title, nonprofit, location, or commitment
-            </label>
-            <input
-              id="role-search"
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Try outreach, remote, or weekly"
-              className="warm-input mt-3"
-            />
-
-            <div className="mt-5 space-y-3">
-              {error && <p className="text-sm text-orange-700">{error}</p>}
-              {!error &&
-                filteredRoles.slice(0, 4).map((role) => (
-                  <div
-                    key={role.id}
-                    className="rounded-[1.4rem] border border-white/80 bg-[#fff7ef] p-4 shadow-soft"
-                  >
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="font-semibold text-pine">{role.task_title || role.title}</p>
-                        <p className="text-sm text-[#6B7280]">
-                          {role.organization?.org_name || role.nonprofit} • {role.organization?.city || role.location}
-                        </p>
-                      </div>
-                      <Badge
-                        tone={
-                          role.volunteer_urgency === 'High' || role.volunteer_urgency === 'Critical'
-                            ? 'danger'
-                            : 'warning'
-                        }
-                      >
-                        {role.volunteer_urgency || 'Medium'} urgency
-                      </Badge>
-                    </div>
-                    <p className="mt-3 text-sm text-[#54636b]">
-                      {role.task_category} • {role.availability_preference}
-                    </p>
-                  </div>
-                ))}
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/organizations/new" className="button-secondary">
-                Add an organization
-              </Link>
-              <Link to="/volunteers/new" className="button-secondary">
-                Create a volunteer profile
-              </Link>
-            </div>
-          </Card>
+ 
         </div>
       </section>
 
@@ -204,13 +147,7 @@ function LandingPage() {
         </Card>
       </section>
 
-      <section className="panel px-6 py-8 lg:px-10">
-        <SectionHeader
-          eyebrow="Why this homepage changed"
-          title="The homepage now reflects the product you actually have in your demo."
-          description="Instead of describing future ideas in the abstract, it now points people toward the live workflows already in BridgeBC: organization setup, volunteer onboarding, and the volunteer dashboard."
-        />
-      </section>
+      
     </>
   )
 }

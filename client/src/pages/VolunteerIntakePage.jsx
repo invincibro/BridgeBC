@@ -124,7 +124,7 @@ function VolunteerIntakePage() {
         title="Volunteer intake"
       />
 
-      <section className="mx-auto w-full max-w-4xl">
+      <section >
         <Card title="Volunteer profile">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
 
