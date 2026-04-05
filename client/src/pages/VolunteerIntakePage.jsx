@@ -7,6 +7,7 @@ import { toggleListValue } from '../lib/forms.js'
 import { createVolunteer, getVolunteers } from '../services/api.js'
 
 const languageOptions = ['English', 'French', 'Cantonese', 'Mandarin', 'Punjabi', 'Hindi', 'Tagalog']
+
 const skillOptions = [
   'Translation/interpretation',
   'Accounting/bookkeeping',
@@ -24,6 +25,7 @@ const skillOptions = [
   'Outreach/community engagement',
   'Mental health support',
 ]
+
 const interestOptions = [
   'Disability services',
   'Indigenous communities',
@@ -38,14 +40,16 @@ const interestOptions = [
   'Education & literacy',
   'Senior services',
 ]
+
 const availabilityOptions = [
-  'Weekday mornings',
-  'Weekday afternoons',
-  'Weekday evenings',
-  'Weekend mornings',
-  'Weekend afternoons',
-  'Weekend evenings',
+  { label: 'Weekday mornings', key: 'weekday_morning' },
+  { label: 'Weekday afternoons', key: 'weekday_afternoon' },
+  { label: 'Weekday evenings', key: 'weekday_evening' },
+  { label: 'Weekend mornings', key: 'weekend_morning' },
+  { label: 'Weekend afternoons', key: 'weekend_afternoon' },
+  { label: 'Weekend evenings', key: 'weekend_evening' },
 ]
+
 const experienceOptions = ['None', 'Some (1-2 orgs)', 'Experienced (3+ orgs)']
 const backgroundStatusOptions = ['Not yet', 'In progress', 'Completed']
 
@@ -56,12 +60,18 @@ const initialForm = {
   neighbourhood: '',
   languages_spoken: ['English'],
   skills: [],
-  cause_areas_of_interest: [],
-  availability: [],
+  interests: [],
   hours_available_per_month: 4,
-  prior_volunteer_experience: 'Some (1-2 orgs)',
+  experience_level: 'Some (1-2 orgs)',
   has_vehicle: false,
   background_check_status: 'Not yet',
+
+  weekday_morning: false,
+  weekday_afternoon: false,
+  weekday_evening: false,
+  weekend_morning: false,
+  weekend_afternoon: false,
+  weekend_evening: false,
 }
 
 function VolunteerIntakePage() {
@@ -112,12 +122,13 @@ function VolunteerIntakePage() {
       <SectionHeader
         eyebrow="Volunteer profile"
         title="Capture the volunteer fields exactly as they exist in the database."
-        description="This intake form now follows the volunteer table closely so records look like your spreadsheet and save cleanly to Postgres."
+        description="This intake form now follows the volunteer table closely so records save cleanly to Postgres."
       />
 
       <section className="mx-auto w-full max-w-4xl">
         <Card title="Volunteer intake form" subtitle="Short enough for a demo, rich enough for scoring.">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
+
             <FormField label="First name" htmlFor="first_name" required>
               <TextInput
                 id="first_name"
@@ -126,6 +137,7 @@ function VolunteerIntakePage() {
                 placeholder="Maya"
               />
             </FormField>
+
             <FormField label="Last name" htmlFor="last_name" required>
               <TextInput
                 id="last_name"
@@ -134,6 +146,7 @@ function VolunteerIntakePage() {
                 placeholder="Chen"
               />
             </FormField>
+
             <FormField label="Age" htmlFor="age">
               <TextInput
                 id="age"
@@ -143,6 +156,7 @@ function VolunteerIntakePage() {
                 placeholder="19"
               />
             </FormField>
+
             <FormField label="Neighbourhood" htmlFor="neighbourhood" required>
               <TextInput
                 id="neighbourhood"
@@ -151,6 +165,7 @@ function VolunteerIntakePage() {
                 placeholder="Kitsilano"
               />
             </FormField>
+
             <FormField label="Hours available per month" htmlFor="hours_available_per_month">
               <TextInput
                 id="hours_available_per_month"
@@ -159,8 +174,9 @@ function VolunteerIntakePage() {
                 onChange={updateField('hours_available_per_month')}
               />
             </FormField>
+
             <div className="md:col-span-2">
-              <FormField label="Languages spoken" htmlFor="languages_spoken" required>
+              <FormField label="Languages spoken">
                 <TogglePillGroup
                   options={languageOptions}
                   selected={form.languages_spoken}
@@ -173,8 +189,9 @@ function VolunteerIntakePage() {
                 />
               </FormField>
             </div>
+
             <div className="md:col-span-2">
-              <FormField label="Skills" htmlFor="skills" required>
+              <FormField label="Skills">
                 <TogglePillGroup
                   options={skillOptions}
                   selected={form.skills}
@@ -187,38 +204,32 @@ function VolunteerIntakePage() {
                 />
               </FormField>
             </div>
+
             <div className="md:col-span-2">
-              <FormField label="Cause areas of interest" htmlFor="cause_areas_of_interest">
+              <FormField label="Cause areas of interest">
                 <TogglePillGroup
                   options={interestOptions}
-                  selected={form.cause_areas_of_interest}
+                  selected={form.interests}
                   onToggle={(option) =>
                     setForm((current) => ({
                       ...current,
-                      cause_areas_of_interest: toggleListValue(
-                        current.cause_areas_of_interest,
-                        option,
-                      ),
+                      interests: toggleListValue(current.interests, option),
                     }))
                   }
                 />
               </FormField>
             </div>
+
             <div className="md:col-span-2">
-              <FormField
-                label="Availability preference"
-                htmlFor="availability"
-                required
-                hint="Choose all time slots that usually work for this volunteer."
-              >
+              <FormField label="Availability preference">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {availabilityOptions.map((option) => {
-                    const checked = form.availability.includes(option)
+                  {availabilityOptions.map(({ label, key }) => {
+                    const checked = form[key]
 
                     return (
                       <label
-                        key={option}
-                        className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                        key={key}
+                        className={`flex items-start gap-3 rounded-2xl border px-4 py-3 ${
                           checked
                             ? 'border-pine bg-sky'
                             : 'border-slate-200 bg-white hover:border-moss'
@@ -230,66 +241,70 @@ function VolunteerIntakePage() {
                           onChange={() =>
                             setForm((current) => ({
                               ...current,
-                              availability: toggleListValue(current.availability, option),
+                              [key]: !current[key],
                             }))
                           }
-                          className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                          className="mt-1 h-4 w-4"
                         />
-                        <span className="text-sm font-medium text-slate-700">{option}</span>
+                        <span className="text-sm font-medium">{label}</span>
                       </label>
                     )
                   })}
                 </div>
               </FormField>
             </div>
-            <FormField label="Prior volunteer experience" htmlFor="prior_volunteer_experience">
+
+            <FormField label="Prior volunteer experience">
               <SelectInput
-                id="prior_volunteer_experience"
-                value={form.prior_volunteer_experience}
-                onChange={updateField('prior_volunteer_experience')}
+                value={form.experience_level}
+                onChange={updateField('experience_level')}
                 options={experienceOptions}
               />
             </FormField>
-            <FormField label="Background check status" htmlFor="background_check_status">
+
+            <FormField label="Background check status">
               <SelectInput
-                id="background_check_status"
                 value={form.background_check_status}
                 onChange={updateField('background_check_status')}
                 options={backgroundStatusOptions}
               />
             </FormField>
+
             <div className="md:col-span-2">
               <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-sand px-4 py-4">
                 <input
                   type="checkbox"
                   checked={form.has_vehicle}
                   onChange={updateField('has_vehicle')}
-                  className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                  className="mt-1 h-4 w-4"
                 />
                 <div>
                   <p className="font-medium text-pine">Has vehicle</p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Keep this as a simple transport signal for roles that are less transit-friendly.
+                    Transport availability for roles outside transit corridors.
                   </p>
                 </div>
               </label>
             </div>
+
             {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
+
             {createdVolunteer && (
               <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-                Saved <span className="font-semibold">{createdVolunteer.name}</span>. This person
-                is now available for matching.
+                Saved <span className="font-semibold">{createdVolunteer.first_name} {createdVolunteer.last_name}</span>.
               </div>
             )}
+
             <div className="md:col-span-2 flex justify-end">
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-full bg-pine px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#23473d] disabled:cursor-not-allowed disabled:opacity-70"
+                className="rounded-full bg-pine px-5 py-3 text-sm font-semibold text-white hover:bg-[#23473d] disabled:opacity-70"
               >
                 {saving ? 'Saving volunteer...' : 'Save volunteer profile'}
               </button>
             </div>
+
           </form>
         </Card>
       </section>
