@@ -62,6 +62,38 @@ function normalizeTask(row) {
   };
 }
 
+function deriveAvailabilityPreferenceFromSlots(payload) {
+  const weekdayCount = [
+    payload.weekday_morning,
+    payload.weekday_afternoon,
+    payload.weekday_evening,
+  ].filter(Boolean).length;
+
+  const weekendCount = [
+    payload.weekend_morning,
+    payload.weekend_afternoon,
+    payload.weekend_evening,
+  ].filter(Boolean).length;
+
+  if (weekdayCount === 3 && weekendCount === 0) {
+    return "Weekdays preferred";
+  }
+
+  if (weekdayCount === 0 && weekendCount > 0) {
+    return "Weekends";
+  }
+
+  if (weekdayCount > 0 && weekendCount > 0) {
+    return "Flexible";
+  }
+
+  if (payload.weekday_morning) return "Weekday mornings";
+  if (payload.weekday_afternoon) return "Weekday afternoons";
+  if (payload.weekday_evening) return "Weekday evenings";
+
+  return null;
+}
+
 function normalizeVolunteer(row) {
   const availability = row.availability
     ? row.availability
@@ -276,7 +308,7 @@ app.post("/api/organizations", async (req, res) => {
         volunteer_urgency || null,
         skills_needed || [],
         languages_needed || [],
-        availability_preference || null,
+        availability_preference || deriveAvailabilityPreferenceFromSlots(req.body),
         Boolean(background_check_required),
         Boolean(weekday_morning),
         Boolean(weekday_afternoon),

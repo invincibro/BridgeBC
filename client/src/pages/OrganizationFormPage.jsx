@@ -35,14 +35,6 @@ const skillOptions = [
   'Elder care',
   'Teaching/training',
 ]
-const availabilityPreferenceOptions = [
-  'Weekdays preferred',
-  'Weekday mornings',
-  'Weekday afternoons',
-  'Weekday evenings',
-  'Weekends',
-  'Flexible',
-]
 const timeSlotOptions = [
   { field: 'weekday_morning', label: 'Weekday morning' },
   { field: 'weekday_afternoon', label: 'Weekday afternoon' },
@@ -68,7 +60,6 @@ const initialForm = {
   volunteer_urgency: 'Medium',
   skills_needed: [],
   languages_needed: ['English'],
-  availability_preference: 'Weekdays preferred',
   background_check_required: false,
   weekday_morning: false,
   weekday_afternoon: false,
@@ -76,6 +67,38 @@ const initialForm = {
   weekend_morning: false,
   weekend_afternoon: false,
   weekend_evening: false,
+}
+
+function deriveAvailabilityPreference(form) {
+  const weekdayCount = [
+    form.weekday_morning,
+    form.weekday_afternoon,
+    form.weekday_evening,
+  ].filter(Boolean).length
+
+  const weekendCount = [
+    form.weekend_morning,
+    form.weekend_afternoon,
+    form.weekend_evening,
+  ].filter(Boolean).length
+
+  if (weekdayCount === 3 && weekendCount === 0) {
+    return 'Weekdays preferred'
+  }
+
+  if (weekdayCount === 0 && weekendCount > 0) {
+    return 'Weekends'
+  }
+
+  if (weekdayCount > 0 && weekendCount > 0) {
+    return 'Flexible'
+  }
+
+  if (form.weekday_morning) return 'Weekday mornings'
+  if (form.weekday_afternoon) return 'Weekday afternoons'
+  if (form.weekday_evening) return 'Weekday evenings'
+
+  return ''
 }
 
 function OrganizationFormPage() {
@@ -105,7 +128,10 @@ function OrganizationFormPage() {
     setError('')
 
     try {
-      const organization = await createOrganization(form)
+      const organization = await createOrganization({
+        ...form,
+        availability_preference: deriveAvailabilityPreference(form),
+      })
       setCreatedOrganization(organization)
       setForm(initialForm)
     } catch (submitError) {
@@ -292,19 +318,11 @@ function OrganizationFormPage() {
                   />
                 </FormField>
               </div>
-              <FormField label="Availability preference" htmlFor="availability_preference">
-                <SelectInput
-                  id="availability_preference"
-                  value={form.availability_preference}
-                  onChange={updateField('availability_preference')}
-                  options={availabilityPreferenceOptions}
-                />
-              </FormField>
               <div className="md:col-span-2">
                 <FormField
                   label="Preferred volunteer time slots"
                   htmlFor="weekday_morning"
-                  hint="Use the exact weekday/weekend boolean slots from your SQL."
+                  hint="These checkbox selections now define the saved availability preference."
                 >
                   <div className="grid gap-3 sm:grid-cols-2">
                     {timeSlotOptions.map((option) => (
@@ -326,6 +344,9 @@ function OrganizationFormPage() {
                       </label>
                     ))}
                   </div>
+                  <p className="mt-3 text-sm text-slate-500">
+                    Saved as: {deriveAvailabilityPreference(form) || 'No preference selected yet'}
+                  </p>
                 </FormField>
               </div>
               <div className="md:col-span-2">

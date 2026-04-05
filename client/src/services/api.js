@@ -64,6 +64,10 @@ export function getVolunteerById(id) {
   return fetchJson(`/volunteers/${id}`)
 }
 
+export function getRecommendedOrganizationsForVolunteer(id) {
+  return fetchJson(`/volunteers/${id}/recommended-organizations`)
+}
+
 export function createVolunteer(payload) {
   return postJson('/volunteers', payload)
 }

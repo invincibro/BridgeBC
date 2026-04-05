@@ -8,7 +8,7 @@ const links = [
   { label: 'Organization Setup', to: '/organizations/new' },
   { label: 'Volunteer Intake', to: '/volunteers/new' },
   { label: 'Volunteer Matches', to: '/matches' },
-  { label: 'Volunteer Profile', to: '/volunteers/vol-101' },
+  { label: 'Volunteer Dashboard', to: '/volunteers/dashboard' },
 ]
 
 function Navbar() {

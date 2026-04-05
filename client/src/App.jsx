@@ -18,6 +18,7 @@ function App() {
         <Route path="/tasks/new" element={<Navigate to="/organizations/new" replace />} />
         <Route path="/matches" element={<VolunteerMatchPage />} />
         <Route path="/volunteers/new" element={<VolunteerIntakePage />} />
+        <Route path="/volunteers/dashboard" element={<VolunteerProfilePage />} />
         <Route path="/volunteers/:id" element={<VolunteerProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
