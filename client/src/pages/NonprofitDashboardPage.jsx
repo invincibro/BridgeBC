@@ -29,7 +29,6 @@ function NonprofitDashboardPage() {
       <SectionHeader
         eyebrow="Nonprofit dashboard"
         title="Track needs, urgency, and continuity risks in one place."
-        description="This view is designed for nonprofit staff who need to post roles, review open requests, and spot weak handoffs quickly."
       />
 
       {/* Metrics Cards */}

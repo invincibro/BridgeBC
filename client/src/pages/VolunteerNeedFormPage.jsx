@@ -144,12 +144,11 @@ function VolunteerNeedFormPage() {
     <>
       <SectionHeader
         eyebrow="Current volunteer need"
-        title="Update the current volunteer need separately."
-        description="This page saves only the volunteer-need fields that live on the organizations table."
+        title="Current volunteer need"
       />
 
       <section className="mx-auto w-full max-w-4xl">
-        <Card title="Current volunteer need form" subtitle="Choose an organization, then update its current volunteer need fields.">
+        <Card title="Volunteer need">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
             <FormField label="Organization" htmlFor="org_id" required>
               <SelectInput
@@ -206,9 +205,6 @@ function VolunteerNeedFormPage() {
                     </label>
                   ))}
                 </div>
-                <p className="mt-3 text-sm text-slate-500">
-                  Saved as: {deriveAvailabilityPreference(form) || 'No preference selected yet'}
-                </p>
               </FormField>
             </div>
 
@@ -252,9 +248,6 @@ function VolunteerNeedFormPage() {
                 />
                 <div>
                   <p className="font-medium text-pine">Background check required</p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Save whether volunteers for this organization currently need a background check.
-                  </p>
                 </div>
               </label>
             </div>

@@ -136,21 +136,21 @@ function explainJobFit(volunteer, job) {
   } = getMatchingDetails(volunteer, job);
   const reasons = [];
 
+  if (matchingSkills.length > 0) {
+    reasons.push(`Fits your ${matchingSkills[0].toLowerCase()} experience`);
+  }
+
   if (matchingAvailability.length > 0) {
     const slot = humanizeAvailabilitySlot(matchingAvailability[0]);
     reasons.push(`Matches your ${slot.toLowerCase()} availability`);
   }
 
-  if (matchingLanguages.length > 0) {
-    reasons.push(`Uses your ${matchingLanguages[0]} language`);
-  }
-
-  if (matchingSkills.length > 0) {
-    reasons.push(`Fits your ${matchingSkills[0].toLowerCase()} experience`);
-  }
-
   if (matchingInterest) {
     reasons.push(`Aligns with your interest in ${matchingInterest.toLowerCase()}`);
+  }
+
+  if (matchingLanguages.length > 0) {
+    reasons.push(`Uses your ${matchingLanguages[0]} language`);
   }
 
   if (

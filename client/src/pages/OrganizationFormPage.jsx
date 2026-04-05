@@ -69,12 +69,11 @@ function OrganizationFormPage() {
     <>
       <SectionHeader
         eyebrow="Organization profile"
-        title="Save the nonprofit record first."
-        description="This page stores only organization profile information. Current volunteer needs are filled out separately afterward."
+        title="Organization setup"
       />
 
       <section className="mx-auto w-full max-w-4xl">
-        <Card title="Organization profile form" subtitle="Create the nonprofit record once, then continue to current volunteer need.">
+        <Card title="Organization profile">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
             <FormField label="Business number (BN)" htmlFor="BN" required>
               <TextInput
@@ -180,7 +179,7 @@ function OrganizationFormPage() {
             {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
             {createdOrganization && (
               <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-                Saved <span className="font-semibold">{createdOrganization.org_name}</span>. Redirecting to the current volunteer need form.
+                Saved <span className="font-semibold">{createdOrganization.org_name}</span>.
               </div>
             )}
 

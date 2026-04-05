@@ -1,8 +1,9 @@
 // VolunteerProfilePage doubles as the volunteer-facing dashboard.
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
+import { findTopSimilarVolunteers } from '../lib/volunteerSimilarity.js'
 import {
   getRecommendedOrganizationsForVolunteer,
   getVolunteerById,
@@ -49,6 +50,12 @@ function getBackgroundCheckTone(required) {
   return required ? 'warning' : 'success'
 }
 
+function getSimilarityLabel(score) {
+  if (score >= 0.85) return 'Very similar'
+  if (score >= 0.7) return 'Strong overlap'
+  return 'Good match'
+}
+
 function getMatchReasons(volunteer, organization) {
   if (Array.isArray(organization.match_reasons) && organization.match_reasons.length > 0) {
     return organization.match_reasons
@@ -67,19 +74,9 @@ function getMatchReasons(volunteer, organization) {
   const orgAvailability = normalizeList(organization.availability_preference)
   const reasons = []
 
-  const sharedLanguage = volunteerLanguages.find((language) => orgLanguages.includes(language))
-  if (sharedLanguage) {
-    reasons.push(`Uses your ${sharedLanguage} language`)
-  }
-
   const sharedSkill = volunteerSkills.find((skill) => orgSkills.includes(skill))
   if (sharedSkill) {
     reasons.push(`Fits your ${sharedSkill.toLowerCase()} experience`)
-  }
-
-  const sharedInterest = volunteerInterests.find((interest) => interest === organization.sector)
-  if (sharedInterest) {
-    reasons.push(`Aligns with your interest in ${sharedInterest.toLowerCase()}`)
   }
 
   if (
@@ -90,6 +87,16 @@ function getMatchReasons(volunteer, organization) {
     )
   ) {
     reasons.push('Matches your availability')
+  }
+
+  const sharedInterest = volunteerInterests.find((interest) => interest === organization.sector)
+  if (sharedInterest) {
+    reasons.push(`Aligns with your interest in ${sharedInterest.toLowerCase()}`)
+  }
+
+  const sharedLanguage = volunteerLanguages.find((language) => orgLanguages.includes(language))
+  if (sharedLanguage) {
+    reasons.push(`Uses your ${sharedLanguage} language`)
   }
 
   if (reasons.length === 0) {
@@ -116,42 +123,6 @@ function getRoleImpact(organization) {
   }
 
   return `${volunteersNeeded} volunteer${volunteersNeeded > 1 ? 's' : ''} could make this organization’s work feel lighter and more consistent.`
-}
-
-function getImpactHighlights(volunteer, recommendations) {
-  const volunteerLanguages = normalizeList(volunteer.languages_spoken)
-  const volunteerAvailability = normalizeList(
-    volunteer.availability_options || volunteer.availability,
-  )
-
-  const languageMatches = recommendations.filter((organization) =>
-    normalizeList(organization.languages_needed).some((language) =>
-      volunteerLanguages.includes(language),
-    ),
-  )
-
-  const urgencyMatches = recommendations.filter(
-    (organization) =>
-      organization.volunteer_urgency === 'High' || organization.volunteer_urgency === 'Critical',
-  )
-
-  const weekdayMatches = recommendations.filter((organization) =>
-    normalizeList(organization.availability_preference).some((slot) =>
-      String(slot).toLowerCase().includes('weekday'),
-    ),
-  )
-
-  return [
-    languageMatches.length
-      ? `${languageMatches.length} organization${languageMatches.length > 1 ? 's' : ''} need the languages you already speak.`
-      : 'Your profile is ready for organizations that need flexible, dependable support.',
-    urgencyMatches.length
-      ? `${urgencyMatches.length} high-need role${urgencyMatches.length > 1 ? 's are' : ' is'} looking for help soon.`
-      : 'There are gentle, lower-pressure opportunities available right now.',
-    volunteerAvailability.length && weekdayMatches.length
-      ? 'Your availability overlaps with weekday roles that need steady support.'
-      : 'A complete profile will unlock even more tailored opportunities.',
-  ]
 }
 
 function VolunteerProfilePage() {
@@ -202,6 +173,14 @@ function VolunteerProfilePage() {
       })
   }, [id, navigate])
 
+  const similarVolunteers = useMemo(() => {
+    if (!volunteer) {
+      return []
+    }
+
+    return findTopSimilarVolunteers(volunteer, volunteerOptions, 3)
+  }, [volunteer, volunteerOptions])
+
   if (error) {
     return <p className="rounded-3xl bg-orange-50 p-6 text-orange-700">{error}</p>
   }
@@ -218,7 +197,6 @@ function VolunteerProfilePage() {
   const availability = normalizeList(volunteer.availability_options || volunteer.availability)
   const strongestRecommendation = recommendedOrganizations[0]
   const nextRecommendations = recommendedOrganizations.slice(1, 4)
-  const impactHighlights = getImpactHighlights(volunteer, recommendedOrganizations)
   const volunteerDescriptionParts = [
     volunteer.neighbourhood || 'Community location not provided',
     volunteer.background_check_status || 'Background check status pending',
@@ -235,7 +213,7 @@ function VolunteerProfilePage() {
                   Volunteer Dashboard
                 </p>
                 <h1 className="mt-3 text-4xl leading-tight tracking-tight text-pine sm:text-6xl">
-                  Welcome back, {firstName} <span className="not-italic">👋</span>
+                  Welcome, {firstName} <span className="not-italic">👋</span>
                 </h1>
               </div>
               <div className="w-full max-w-md rounded-[1.6rem] border border-[#efe4d7] bg-[#fbf8f2] p-4 shadow-soft">
@@ -264,21 +242,9 @@ function VolunteerProfilePage() {
                 </select>
               </div>
             </div>
-
-            <p className="mt-6 max-w-3xl text-xl text-slate-700">
-              Your time and skills can make a real difference in your community.
-            </p>
-            <p className="mt-3 max-w-3xl text-base text-slate-600">
-              {strongestRecommendation
-                ? `Right now, you’re especially well matched for ${
-                    strongestRecommendation.account_name || strongestRecommendation.legal_name
-                  } because your profile overlaps with the support they need most.`
-                : 'Complete your profile and we’ll surface the organizations where you can step in with confidence and care.'}
-            </p>
-
             <div className="mt-7 flex flex-wrap gap-3">
               <a href="#recommended-organizations" className="button-primary">
-                See your best matches
+                See matches
               </a>
               <Link to="/volunteers/new" className="button-secondary">
                 Update your profile
@@ -292,7 +258,7 @@ function VolunteerProfilePage() {
                   {recommendedOrganizations.length}
                 </p>
                 <p className="mt-2 text-sm text-slate-600">
-                  Places where your help could matter this week.
+                  Matching organizations
                 </p>
               </div>
               <div className="rounded-[1.8rem] bg-[#ffe7b0] p-5">
@@ -301,14 +267,14 @@ function VolunteerProfilePage() {
                   {volunteer.hours_available_per_month || 0}
                 </p>
                 <p className="mt-2 text-sm text-slate-600">
-                  Hours each month you said feel manageable.
+                  Hours per month
                 </p>
               </div>
               <div className="rounded-[1.8rem] bg-[#e7daf7] p-5">
                 <p className="text-sm font-semibold text-pine">Strengths you bring</p>
                 <p className="mt-3 text-4xl font-semibold text-pine">{skills.length || 0}</p>
                 <p className="mt-2 text-sm text-slate-600">
-                  Skills that can create steady support for others.
+                  Skills on your profile
                 </p>
               </div>
             </div>
@@ -322,9 +288,6 @@ function VolunteerProfilePage() {
                 <div className="max-w-2xl">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge tone="success">Featured fit</Badge>
-                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pine">
-                      Best current match
-                    </p>
                   </div>
                   <h2 className="mt-4 text-3xl text-pine">
                     {strongestRecommendation.account_name || strongestRecommendation.legal_name}
@@ -333,9 +296,7 @@ function VolunteerProfilePage() {
                     {strongestRecommendation.city || 'Remote welcome'} •{' '}
                     {strongestRecommendation.sector || 'Community support'}
                   </p>
-                  <p className="mt-4 max-w-xl text-base text-slate-700">
-                    {getRoleImpact(strongestRecommendation)}
-                  </p>
+                  <p className="mt-4 max-w-xl text-base text-slate-700">{getRoleImpact(strongestRecommendation)}</p>
                 </div>
 
                 <div className="rounded-[1.7rem] bg-white px-5 py-4 text-right shadow-sm">
@@ -345,12 +306,12 @@ function VolunteerProfilePage() {
                   <p className="mt-2 text-4xl font-semibold text-pine">
                     {Number(strongestRecommendation.score || 0).toFixed(2)}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">Recommendation score</p>
+                  <p className="mt-1 text-xs text-slate-500">Score</p>
                 </div>
               </div>
 
               <div className="mt-6 rounded-[1.8rem] bg-white/70 p-5">
-                <p className="text-sm font-semibold text-pine">Why this fits you</p>
+                <p className="text-sm font-semibold text-pine">Why it matches</p>
                 <ul className="mt-3 space-y-2">
                   {getMatchReasons(volunteer, strongestRecommendation).map((reason) => (
                     <li key={reason} className="flex gap-3 text-sm text-slate-700">
@@ -410,144 +371,188 @@ function VolunteerProfilePage() {
             </article>
           )}
 
-          <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-            <Card
-              title="Your strengths and preferences"
-              subtitle="These details help us suggest opportunities where you can feel useful, welcomed, and prepared."
-              className="bg-white"
-            >
-              <div className="space-y-6 text-sm">
-                <div className="rounded-2xl bg-sand/70 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">
-                    At a glance
-                  </p>
-                  <p className="mt-2 text-base font-medium text-pine">{volunteerName}</p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    {volunteerDescriptionParts.join(' • ')}
-                  </p>
-                </div>
-
-                <div>
-                  <p className="font-medium text-slate-500">Skills you’ve shared</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {skills.length ? (
-                      skills.map((skill) => <Badge key={skill}>{skill}</Badge>)
-                    ) : (
-                      <p>Not provided yet</p>
-                    )}
+          <div className="grid gap-6 xl:grid-cols-2">
+            {nextRecommendations.length > 0 && (
+              <div className="space-y-4" id="recommended-organizations">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-2xl text-pine">Other good-fit organizations</h2>
+                  </div>
+                  <div className="rounded-full bg-sand px-3 py-2 text-sm font-medium text-slate-500">
+                    {nextRecommendations.length} more
                   </div>
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <div>
-                    <p className="font-medium text-slate-500">Languages</p>
-                    <p className="mt-2 text-slate-700">
-                      {languages.length ? languages.join(', ') : 'Not provided yet'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-500">Availability</p>
-                    <p className="mt-2 text-slate-700">
-                      {availability.length ? availability.join(', ') : 'Not provided yet'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-500">Cause areas you care about</p>
-                    <p className="mt-2 text-slate-700">
-                      {interests.length ? interests.join(', ') : 'Not provided yet'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-500">Volunteer experience</p>
-                    <p className="mt-2 text-slate-700">
-                      {volunteer.prior_volunteer_experience ||
-                        volunteer.experience_level ||
-                        'Not provided yet'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-500">Age</p>
-                    <p className="mt-2 text-slate-700">{volunteer.age || 'Not provided yet'}</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-slate-500">Transportation</p>
-                    <p className="mt-2 text-slate-700">
-                      {volunteer.has_vehicle ? 'Has access to a vehicle' : 'No vehicle listed'}
-                    </p>
-                  </div>
+                {nextRecommendations.map((organization, index) => {
+                  const score = Number(organization.score || 0)
+                  const reasons = getMatchReasons(volunteer, organization)
+
+                  return (
+                    <article
+                      key={organization.id}
+                      className={`rounded-[1.9rem] p-5 shadow-sm ${
+                        index % 2 === 0 ? 'bg-[#f4d7e8]' : 'bg-[#dfeeee]'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-lg font-semibold text-pine">
+                            {organization.account_name || organization.legal_name}
+                          </p>
+                          <p className="mt-1 text-sm text-slate-600">
+                            {organization.city || 'Remote welcome'} •{' '}
+                            {organization.sector || 'Community support'}
+                          </p>
+                        </div>
+                        <div className="rounded-full bg-white px-3 py-2 text-right shadow-sm">
+                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-moss">
+                            {getScoreLabel(score)}
+                          </p>
+                          <p className="mt-1 text-lg font-semibold text-pine">
+                            {score.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <p className="mt-4 text-sm text-slate-700">{reasons[0]}</p>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {normalizeList(organization.languages_needed)
+                          .slice(0, 2)
+                          .map((language) => (
+                            <Badge key={language}>{language}</Badge>
+                          ))}
+                        {normalizeList(organization.skills_needed)
+                          .slice(0, 2)
+                          .map((skill) => (
+                            <Badge key={skill} tone="info">
+                              {skill}
+                            </Badge>
+                          ))}
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            )}
+
+            {similarVolunteers.length > 0 && (
+              <Card
+                title="Volunteers like you"
+                subtitle="People with similar skills, interests, and availability"
+                className="bg-white"
+              >
+                <div className="space-y-4">
+                  {similarVolunteers.map(({ volunteer: similarVolunteer, similarityScore, commonFactors }) => (
+                    <article
+                      key={similarVolunteer.volunteer_id || similarVolunteer.id}
+                      className="rounded-[1.6rem] border border-[#efe4d7] bg-[#fffaf5] p-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-base font-semibold text-pine">
+                            {getVolunteerName(similarVolunteer)}
+                          </p>
+                          <p className="mt-1 text-sm text-slate-600">
+                            {similarVolunteer.neighbourhood || 'Neighbourhood not listed'}
+                          </p>
+                        </div>
+                        <div className="rounded-full bg-sand px-3 py-2 text-right">
+                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-moss">
+                            {getSimilarityLabel(similarityScore)}
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-pine">
+                            {similarityScore.toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                        {commonFactors.slice(0, 4).map((factor) => (
+                          <li
+                            key={`${similarVolunteer.volunteer_id || similarVolunteer.id}-${factor}`}
+                            className="flex gap-2"
+                          >
+                            <span className="text-pine" aria-hidden="true">
+                              •
+                            </span>
+                            <span>{factor}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
+                  ))}
+                </div>
+              </Card>
+            )}
+          </div>
+
+          <Card
+            title="Your info"
+            className="bg-white"
+          >
+            <div className="space-y-6 text-sm">
+              <div className="rounded-2xl bg-sand/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">
+                  At a glance
+                </p>
+                <p className="mt-2 text-base font-medium text-pine">{volunteerName}</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  {volunteerDescriptionParts.join(' • ')}
+                </p>
+              </div>
+
+              <div>
+                <p className="font-medium text-slate-500">Skills you’ve shared</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {skills.length ? (
+                    skills.map((skill) => <Badge key={skill}>{skill}</Badge>)
+                  ) : (
+                    <p>Not provided yet</p>
+                  )}
                 </div>
               </div>
-            </Card>
 
-            <div className="space-y-6">
-              {nextRecommendations.length > 0 && (
-                <div className="space-y-4" id="recommended-organizations">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-moss">
-                        More ways to help
-                      </p>
-                      <h2 className="mt-2 text-2xl text-pine">Other good-fit organizations</h2>
-                    </div>
-                    <div className="rounded-full bg-sand px-3 py-2 text-sm font-medium text-slate-500">
-                      {nextRecommendations.length} more
-                    </div>
-                  </div>
-
-                  {nextRecommendations.map((organization, index) => {
-                    const score = Number(organization.score || 0)
-                    const reasons = getMatchReasons(volunteer, organization)
-
-                    return (
-                      <article
-                        key={organization.id}
-                        className={`rounded-[1.9rem] p-5 shadow-sm ${
-                          index % 2 === 0 ? 'bg-[#f4d7e8]' : 'bg-[#dfeeee]'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <p className="text-lg font-semibold text-pine">
-                              {organization.account_name || organization.legal_name}
-                            </p>
-                            <p className="mt-1 text-sm text-slate-600">
-                              {organization.city || 'Remote welcome'} •{' '}
-                              {organization.sector || 'Community support'}
-                            </p>
-                          </div>
-                          <div className="rounded-full bg-white px-3 py-2 text-right shadow-sm">
-                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-moss">
-                              {getScoreLabel(score)}
-                            </p>
-                            <p className="mt-1 text-lg font-semibold text-pine">
-                              {score.toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-
-                        <p className="mt-4 text-sm text-slate-700">{reasons[0]}</p>
-
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          {normalizeList(organization.languages_needed)
-                            .slice(0, 2)
-                            .map((language) => (
-                              <Badge key={language}>{language}</Badge>
-                            ))}
-                          {normalizeList(organization.skills_needed)
-                            .slice(0, 2)
-                            .map((skill) => (
-                              <Badge key={skill} tone="info">
-                                {skill}
-                              </Badge>
-                            ))}
-                        </div>
-                      </article>
-                    )
-                  })}
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                <div>
+                  <p className="font-medium text-slate-500">Languages</p>
+                  <p className="mt-2 text-slate-700">
+                    {languages.length ? languages.join(', ') : 'Not provided yet'}
+                  </p>
                 </div>
-              )}
+                <div>
+                  <p className="font-medium text-slate-500">Availability</p>
+                  <p className="mt-2 text-slate-700">
+                    {availability.length ? availability.join(', ') : 'Not provided yet'}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-500">Cause areas</p>
+                  <p className="mt-2 text-slate-700">
+                    {interests.length ? interests.join(', ') : 'Not provided yet'}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-500">Experience</p>
+                  <p className="mt-2 text-slate-700">
+                    {volunteer.prior_volunteer_experience ||
+                      volunteer.experience_level ||
+                      'Not provided yet'}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-500">Age</p>
+                  <p className="mt-2 text-slate-700">{volunteer.age || 'Not provided yet'}</p>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-500">Transportation</p>
+                  <p className="mt-2 text-slate-700">
+                    {volunteer.has_vehicle ? 'Has access to a vehicle' : 'No vehicle listed'}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+          </Card>
         </section>
       </div>
     </div>

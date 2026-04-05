@@ -121,12 +121,11 @@ function VolunteerIntakePage() {
     <>
       <SectionHeader
         eyebrow="Volunteer profile"
-        title="Capture the volunteer fields exactly as they exist in the database."
-        description="This intake form now follows the volunteer table closely so records save cleanly to Postgres."
+        title="Volunteer intake"
       />
 
       <section className="mx-auto w-full max-w-4xl">
-        <Card title="Volunteer intake form" subtitle="Short enough for a demo, rich enough for scoring.">
+        <Card title="Volunteer profile">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
 
             <FormField label="First name" htmlFor="first_name" required>
