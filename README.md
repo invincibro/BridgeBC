@@ -5,7 +5,7 @@ BridgeBC is a full-stack MVP that helps nonprofits connect with volunteers while
 ## Project structure
 
 - `client/`: React + Vite frontend with Tailwind CSS and React Router
-- `server/`: Express backend serving mock JSON data
+- `api/`: Express backend serving mock JSON data
 
 ## Run the app
 
