@@ -13,19 +13,30 @@ Open two terminals from the project root.
 
 ### Terminal 1: start the API
 
+#### Install dependencies
 ```bash
-cd /Users/hoimingfong/BridgeBC/server
-npm install
-npm run dev
-```
+cd /api
 
-The API runs on `http://localhost:5001`.
+npm install
+```
+#### Run docker compose and set up database
+- make sure docker is installed and running
+```bash
+docker-compose up -d --build
+
+node ./api/migrate.js
+
+node ./api/seed.js
+```
+The API runs on `http://localhost:3000`.
 
 ### Terminal 2: start the frontend
 
 ```bash
-cd /Users/hoimingfong/BridgeBC/client
+cd /client
+
 npm install
+
 npm run dev
 ```
 
