@@ -50,6 +50,10 @@ function getBackgroundCheckTone(required) {
 }
 
 function getMatchReasons(volunteer, organization) {
+  if (Array.isArray(organization.match_reasons) && organization.match_reasons.length > 0) {
+    return organization.match_reasons
+  }
+
   const volunteerSkills = normalizeList(volunteer.skills)
   const volunteerLanguages = normalizeList(volunteer.languages_spoken)
   const volunteerInterests = normalizeList(
@@ -65,17 +69,17 @@ function getMatchReasons(volunteer, organization) {
 
   const sharedLanguage = volunteerLanguages.find((language) => orgLanguages.includes(language))
   if (sharedLanguage) {
-    reasons.push(`Your ${sharedLanguage} language skills can help people feel understood.`)
+    reasons.push(`Uses your ${sharedLanguage} language`)
   }
 
   const sharedSkill = volunteerSkills.find((skill) => orgSkills.includes(skill))
   if (sharedSkill) {
-    reasons.push(`Your ${sharedSkill.toLowerCase()} experience lines up with this need.`)
+    reasons.push(`Fits your ${sharedSkill.toLowerCase()} experience`)
   }
 
   const sharedInterest = volunteerInterests.find((interest) => interest === organization.sector)
   if (sharedInterest) {
-    reasons.push(`This aligns with your interest in ${sharedInterest.toLowerCase()}.`)
+    reasons.push(`Aligns with your interest in ${sharedInterest.toLowerCase()}`)
   }
 
   if (
@@ -85,14 +89,14 @@ function getMatchReasons(volunteer, organization) {
       orgAvailability.join(' ').toLowerCase().includes(String(slot).toLowerCase()),
     )
   ) {
-    reasons.push('Your availability overlaps with the times this organization needs support.')
+    reasons.push('Matches your availability')
   }
 
   if (reasons.length === 0) {
-    reasons.push('Your profile suggests you could step in quickly and support this team with care.')
+    reasons.push('Your profile overlaps with this organization’s current need')
   }
 
-  return reasons.slice(0, 2)
+  return reasons.slice(0, 3)
 }
 
 function getRoleImpact(organization) {
@@ -223,7 +227,7 @@ function VolunteerProfilePage() {
   return (
     <div className="panel overflow-hidden border-white/80 bg-[#fbfaf7]/95 p-4 shadow-panel sm:p-6 lg:p-8">
       <div className="space-y-6">
-        <section className="grid gap-6 xl:grid-cols-[1.35fr_0.92fr]">
+        <section className="space-y-6">
           <div className="rounded-[2.5rem] bg-white px-6 py-7 shadow-sm sm:px-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
@@ -234,8 +238,30 @@ function VolunteerProfilePage() {
                   Welcome back, {firstName} <span className="not-italic">👋</span>
                 </h1>
               </div>
-              <div className="rounded-full bg-sand px-4 py-2 text-sm font-medium text-slate-600">
-                {volunteerDescriptionParts.join(' • ')}
+              <div className="w-full max-w-md rounded-[1.6rem] border border-[#efe4d7] bg-[#fbf8f2] p-4 shadow-soft">
+                <label
+                  htmlFor="volunteer-select"
+                  className="text-xs font-semibold uppercase tracking-[0.18em] text-moss"
+                >
+                  Switch volunteer
+                </label>
+                <select
+                  id="volunteer-select"
+                  value={volunteer.volunteer_id || volunteer.id}
+                  onChange={(event) => navigate(`/volunteers/${event.target.value}`)}
+                  className="warm-input mt-3"
+                >
+                  {volunteerOptions.map((option) => {
+                    const optionId = option.volunteer_id || option.id
+                    const optionName = getVolunteerName(option) || optionId
+
+                    return (
+                      <option key={optionId} value={optionId}>
+                        {optionName} ({optionId})
+                      </option>
+                    )
+                  })}
+                </select>
               </div>
             </div>
 
@@ -287,154 +313,104 @@ function VolunteerProfilePage() {
               </div>
             </div>
           </div>
-
-          <div className="space-y-6">
-            <div className="rounded-[2.5rem] bg-white px-6 py-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-moss">
-                    Community pulse
-                  </p>
-                  <h2 className="mt-2 text-2xl text-pine">Why you matter right now</h2>
-                </div>
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#fff4df] text-2xl">
-                  🌿
-                </div>
-              </div>
-
-              <ul className="mt-5 space-y-4">
-                {impactHighlights.map((highlight) => (
-                  <li key={highlight} className="rounded-2xl bg-[#eef6f1] px-4 py-3">
-                    <p className="text-sm text-slate-700">{highlight}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="rounded-[2.5rem] bg-[#dfeeee] px-6 py-6 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pine">
-                Your profile lens
-              </p>
-              <div className="mt-4 space-y-4 text-sm">
-                <div>
-                  <p className="font-medium text-slate-500">Languages</p>
-                  <p className="mt-1 text-slate-700">
-                    {languages.length ? languages.join(', ') : 'Not provided yet'}
-                  </p>
-                </div>
-                <div>
-                  <p className="font-medium text-slate-500">Availability</p>
-                  <p className="mt-1 text-slate-700">
-                    {availability.length ? availability.join(', ') : 'Not provided yet'}
-                  </p>
-                </div>
-                <div>
-                  <p className="font-medium text-slate-500">Cause areas you care about</p>
-                  <p className="mt-1 text-slate-700">
-                    {interests.length ? interests.join(', ') : 'Not provided yet'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-[1.35fr_0.92fr]">
-          <div className="space-y-6">
-            {strongestRecommendation && (
-              <article className="rounded-[2.5rem] bg-[#ffe7b0] p-6 shadow-sm sm:p-7">
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="max-w-2xl">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge tone="success">Featured fit</Badge>
-                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pine">
-                        Best current match
-                      </p>
-                    </div>
-                    <h2 className="mt-4 text-3xl text-pine">
-                      {strongestRecommendation.account_name || strongestRecommendation.legal_name}
-                    </h2>
-                    <p className="mt-2 text-sm text-slate-600">
-                      {strongestRecommendation.city || 'Remote welcome'} •{' '}
-                      {strongestRecommendation.sector || 'Community support'}
-                    </p>
-                    <p className="mt-4 max-w-xl text-base text-slate-700">
-                      {getRoleImpact(strongestRecommendation)}
+        <section className="space-y-6">
+          {strongestRecommendation && (
+            <article className="rounded-[2.5rem] bg-[#ffe7b0] p-6 shadow-sm sm:p-7">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="max-w-2xl">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge tone="success">Featured fit</Badge>
+                    <p className="text-sm font-semibold uppercase tracking-[0.22em] text-pine">
+                      Best current match
                     </p>
                   </div>
-
-                  <div className="rounded-[1.7rem] bg-white px-5 py-4 text-right shadow-sm">
-                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">
-                      {getScoreLabel(Number(strongestRecommendation.score || 0))}
-                    </p>
-                    <p className="mt-2 text-4xl font-semibold text-pine">
-                      {Number(strongestRecommendation.score || 0).toFixed(2)}
-                    </p>
-                    <p className="mt-1 text-xs text-slate-500">Recommendation score</p>
-                  </div>
+                  <h2 className="mt-4 text-3xl text-pine">
+                    {strongestRecommendation.account_name || strongestRecommendation.legal_name}
+                  </h2>
+                  <p className="mt-2 text-sm text-slate-600">
+                    {strongestRecommendation.city || 'Remote welcome'} •{' '}
+                    {strongestRecommendation.sector || 'Community support'}
+                  </p>
+                  <p className="mt-4 max-w-xl text-base text-slate-700">
+                    {getRoleImpact(strongestRecommendation)}
+                  </p>
                 </div>
 
-                <div className="mt-6 rounded-[1.8rem] bg-white/70 p-5">
-                  <p className="text-sm font-semibold text-pine">Why this fits you</p>
-                  <ul className="mt-3 space-y-2">
-                    {getMatchReasons(volunteer, strongestRecommendation).map((reason) => (
-                      <li key={reason} className="flex gap-3 text-sm text-slate-700">
-                        <span aria-hidden="true" className="mt-1 text-pine">
-                          ✦
-                        </span>
-                        <span>{reason}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="rounded-[1.7rem] bg-white px-5 py-4 text-right shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">
+                    {getScoreLabel(Number(strongestRecommendation.score || 0))}
+                  </p>
+                  <p className="mt-2 text-4xl font-semibold text-pine">
+                    {Number(strongestRecommendation.score || 0).toFixed(2)}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">Recommendation score</p>
                 </div>
+              </div>
 
-                <div className="mt-5 grid gap-3 md:grid-cols-4">
-                  <div className="rounded-[1.4rem] bg-white/80 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      Urgency
-                    </p>
-                    <div className="mt-2">
-                      <Badge tone={getUrgencyTone(strongestRecommendation.volunteer_urgency)}>
-                        {strongestRecommendation.volunteer_urgency || 'Not set'}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="rounded-[1.4rem] bg-white/80 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      People needed
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-pine">
-                      {strongestRecommendation.volunteers_currently_needed || 0}
-                    </p>
-                  </div>
-                  <div className="rounded-[1.4rem] bg-white/80 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      Timing
-                    </p>
-                    <p className="mt-2 text-sm text-slate-700">
-                      {strongestRecommendation.availability_preference || 'Flexible timing'}
-                    </p>
-                  </div>
-                  <div className="rounded-[1.4rem] bg-white/80 p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                      Screening
-                    </p>
-                    <div className="mt-2">
-                      <Badge
-                        tone={getBackgroundCheckTone(
-                          strongestRecommendation.background_check_required,
-                        )}
-                      >
-                        {strongestRecommendation.background_check_required
-                          ? 'Background check needed'
-                          : 'No background check'}
-                      </Badge>
-                    </div>
+              <div className="mt-6 rounded-[1.8rem] bg-white/70 p-5">
+                <p className="text-sm font-semibold text-pine">Why this fits you</p>
+                <ul className="mt-3 space-y-2">
+                  {getMatchReasons(volunteer, strongestRecommendation).map((reason) => (
+                    <li key={reason} className="flex gap-3 text-sm text-slate-700">
+                      <span aria-hidden="true" className="mt-1 text-pine">
+                        ✦
+                      </span>
+                      <span>{reason}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-5 grid gap-3 md:grid-cols-4">
+                <div className="rounded-[1.4rem] bg-white/80 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Urgency
+                  </p>
+                  <div className="mt-2">
+                    <Badge tone={getUrgencyTone(strongestRecommendation.volunteer_urgency)}>
+                      {strongestRecommendation.volunteer_urgency || 'Not set'}
+                    </Badge>
                   </div>
                 </div>
-              </article>
-            )}
+                <div className="rounded-[1.4rem] bg-white/80 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    People needed
+                  </p>
+                  <p className="mt-2 text-lg font-semibold text-pine">
+                    {strongestRecommendation.volunteers_currently_needed || 0}
+                  </p>
+                </div>
+                <div className="rounded-[1.4rem] bg-white/80 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Timing
+                  </p>
+                  <p className="mt-2 text-sm text-slate-700">
+                    {strongestRecommendation.availability_preference || 'Flexible timing'}
+                  </p>
+                </div>
+                <div className="rounded-[1.4rem] bg-white/80 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                    Screening
+                  </p>
+                  <div className="mt-2">
+                    <Badge
+                      tone={getBackgroundCheckTone(
+                        strongestRecommendation.background_check_required,
+                      )}
+                    >
+                      {strongestRecommendation.background_check_required
+                        ? 'Background check needed'
+                        : 'No background check'}
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </article>
+          )}
 
+          <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
             <Card
               title="Your strengths and preferences"
               subtitle="These details help us suggest opportunities where you can feel useful, welcomed, and prepared."
@@ -502,112 +478,74 @@ function VolunteerProfilePage() {
                 </div>
               </div>
             </Card>
-          </div>
 
-          <div className="space-y-6">
-            <div className="rounded-[2.5rem] bg-white p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-moss">
-                    View another volunteer
-                  </p>
-                  <h2 className="mt-2 text-2xl text-pine">Switch dashboard context</h2>
-                </div>
-              </div>
-              <label htmlFor="volunteer-select" className="sr-only">
-                Volunteer profile
-              </label>
-              <select
-                id="volunteer-select"
-                value={volunteer.volunteer_id || volunteer.id}
-                onChange={(event) => navigate(`/volunteers/${event.target.value}`)}
-                className="warm-input mt-5"
-              >
-                {volunteerOptions.map((option) => {
-                  const optionId = option.volunteer_id || option.id
-                  const optionName = getVolunteerName(option) || optionId
+            <div className="space-y-6">
+              {nextRecommendations.length > 0 && (
+                <div className="space-y-4" id="recommended-organizations">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-moss">
+                        More ways to help
+                      </p>
+                      <h2 className="mt-2 text-2xl text-pine">Other good-fit organizations</h2>
+                    </div>
+                    <div className="rounded-full bg-sand px-3 py-2 text-sm font-medium text-slate-500">
+                      {nextRecommendations.length} more
+                    </div>
+                  </div>
 
-                  return (
-                    <option key={optionId} value={optionId}>
-                      {optionName} ({optionId})
-                    </option>
-                  )
-                })}
-              </select>
-            </div>
+                  {nextRecommendations.map((organization, index) => {
+                    const score = Number(organization.score || 0)
+                    const reasons = getMatchReasons(volunteer, organization)
 
-            <div className="rounded-[2.5rem] bg-white p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.22em] text-moss">
-                    More ways to help
-                  </p>
-                  <h2 className="mt-2 text-2xl text-pine">Other good-fit organizations</h2>
-                </div>
-                <div className="rounded-full bg-sand px-3 py-2 text-sm font-medium text-slate-500">
-                  {Math.max(recommendedOrganizations.length - 1, 0)} more
-                </div>
-              </div>
-
-              <div id="recommended-organizations" className="mt-5 space-y-4">
-                {recommendedOrganizations.length === 0 && (
-                  <p className="text-sm text-slate-500">
-                    We don’t have recommendation cards for this volunteer yet. Try completing more of
-                    the profile to surface stronger matches.
-                  </p>
-                )}
-
-                {nextRecommendations.map((organization, index) => {
-                  const score = Number(organization.score || 0)
-                  const reasons = getMatchReasons(volunteer, organization)
-
-                  return (
-                    <article
-                      key={organization.id}
-                      className={`rounded-[1.9rem] p-5 ${
-                        index === 0 ? 'bg-[#f4d7e8]' : 'bg-[#dfeeee]'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-lg font-semibold text-pine">
-                            {organization.account_name || organization.legal_name}
-                          </p>
-                          <p className="mt-1 text-sm text-slate-600">
-                            {organization.city || 'Remote welcome'} •{' '}
-                            {organization.sector || 'Community support'}
-                          </p>
+                    return (
+                      <article
+                        key={organization.id}
+                        className={`rounded-[1.9rem] p-5 shadow-sm ${
+                          index % 2 === 0 ? 'bg-[#f4d7e8]' : 'bg-[#dfeeee]'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-lg font-semibold text-pine">
+                              {organization.account_name || organization.legal_name}
+                            </p>
+                            <p className="mt-1 text-sm text-slate-600">
+                              {organization.city || 'Remote welcome'} •{' '}
+                              {organization.sector || 'Community support'}
+                            </p>
+                          </div>
+                          <div className="rounded-full bg-white px-3 py-2 text-right shadow-sm">
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-moss">
+                              {getScoreLabel(score)}
+                            </p>
+                            <p className="mt-1 text-lg font-semibold text-pine">
+                              {score.toFixed(2)}
+                            </p>
+                          </div>
                         </div>
-                        <div className="rounded-full bg-white px-3 py-2 text-right shadow-sm">
-                          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-moss">
-                            {getScoreLabel(score)}
-                          </p>
-                          <p className="mt-1 text-lg font-semibold text-pine">
-                            {score.toFixed(2)}
-                          </p>
+
+                        <p className="mt-4 text-sm text-slate-700">{reasons[0]}</p>
+
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {normalizeList(organization.languages_needed)
+                            .slice(0, 2)
+                            .map((language) => (
+                              <Badge key={language}>{language}</Badge>
+                            ))}
+                          {normalizeList(organization.skills_needed)
+                            .slice(0, 2)
+                            .map((skill) => (
+                              <Badge key={skill} tone="info">
+                                {skill}
+                              </Badge>
+                            ))}
                         </div>
-                      </div>
-
-                      <p className="mt-4 text-sm text-slate-700">{reasons[0]}</p>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {normalizeList(organization.languages_needed)
-                          .slice(0, 2)
-                          .map((language) => (
-                            <Badge key={language}>{language}</Badge>
-                          ))}
-                        {normalizeList(organization.skills_needed)
-                          .slice(0, 2)
-                          .map((skill) => (
-                            <Badge key={skill} tone="info">
-                              {skill}
-                            </Badge>
-                          ))}
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </section>

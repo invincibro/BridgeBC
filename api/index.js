@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
-const { scoreJob } = require("./lib/scoreJob");
+const { explainJobFit, scoreJob } = require("./lib/scoreJob");
 const { parseAvailability } = require("./lib/parseAvailability")
 
 const app = express();
@@ -318,7 +318,11 @@ app.get("/api/volunteers/:id/recommended-organizations", async (req, res) => {
     const { rows: organizations } = await pool.query("SELECT * FROM organizations");
 
     const ranked = organizations
-      .map((org) => ({ ...org, score: scoreJob(volunteer, org) })).filter((org) => (org.score >= threshold))
+      .map((org) => ({
+        ...org,
+        score: scoreJob(volunteer, org),
+        match_reasons: explainJobFit(volunteer, org),
+      })).filter((org) => (org.score >= threshold))
       .sort((a, b) => b.score - a.score);
 
     res.json(ranked);
