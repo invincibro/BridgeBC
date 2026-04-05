@@ -76,7 +76,7 @@ function AlertProfilePage() {
         if (!muted) {
           const audio = audioRef.current
           audio.currentTime = 0
-          audio.play().catch(() => { })
+          audio.play().catch((err) => {console.error(err) })
         }
       } catch (err) {
         console.error('Failed to parse message', err)

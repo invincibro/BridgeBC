@@ -72,7 +72,7 @@ setInterval(async () => {
                     console.log(`Scored entry ${entry.id} for ${client.clientId}: ${score.toFixed(2)}`)
 
                     if (score >= THRESHOLD) {
-                        client.send(JSON.stringify({ org_id:entry.id, score, title:`${entry.legal_name}`,message: "${entry.legal_name} scored ${score} for you", createdAt:new Date() }))
+                        client.send(JSON.stringify({ org_id:entry.id, score, title:`${entry.legal_name}`,message: `${entry.legal_name} scored ${score} for you`, createdAt:new Date() }))
                         console.log(`Alert sent for entry ${entry.id} to client ${client.clientId}`)
                     }
                 }
