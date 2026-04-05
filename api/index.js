@@ -328,6 +328,8 @@ app.get("/api/volunteers/:id/recommended-organizations", async (req, res) => {
   }
 });
 
+
+// Recomendation fot similar volunteers
 app.get("/api/volunteers/:id/similar-volunteers", async (req, res) => {
   try {
     const { rows: volunteerRows } = await pool.query(
@@ -349,6 +351,7 @@ app.get("/api/volunteers/:id/similar-volunteers", async (req, res) => {
   }
 });
 
+// Recomendation fot suggested teams
 app.get("/api/volunteers/:id/suggested-team", async (req, res) => {
   try {
     const { rows: volunteerRows } = await pool.query(
