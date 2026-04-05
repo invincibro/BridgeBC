@@ -76,6 +76,14 @@ export function getRecommendedOrganizationsForVolunteer(id) {
   return fetchJson(`/volunteers/${id}/recommended-organizations`)
 }
 
+export function getSimilarVolunteersForVolunteer(id) {
+  return fetchJson(`/volunteers/${id}/similar-volunteers`)
+}
+
+export function getSuggestedTeamForVolunteer(id) {
+  return fetchJson(`/volunteers/${id}/suggested-team`)
+}
+
 export function createVolunteer(payload) {
   return postJson('/volunteers', payload)
 }

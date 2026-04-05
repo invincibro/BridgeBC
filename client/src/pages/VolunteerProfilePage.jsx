@@ -1,13 +1,13 @@
 // VolunteerProfilePage doubles as the volunteer-facing dashboard.
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
 import SuggestedVolunteerTeam from '../components/SuggestedVolunteerTeam.jsx'
-import { recommendVolunteerTeam } from '../lib/teamMatching.js'
-import { findTopSimilarVolunteers } from '../lib/volunteerSimilarity.js'
 import {
   getRecommendedOrganizationsForVolunteer,
+  getSimilarVolunteersForVolunteer,
+  getSuggestedTeamForVolunteer,
   getVolunteerById,
   getVolunteers,
 } from '../services/api.js'
@@ -133,6 +133,8 @@ function VolunteerProfilePage() {
   const [volunteerOptions, setVolunteerOptions] = useState([])
   const [volunteer, setVolunteer] = useState(null)
   const [recommendedOrganizations, setRecommendedOrganizations] = useState([])
+  const [similarVolunteers, setSimilarVolunteers] = useState([])
+  const [teamRecommendation, setTeamRecommendation] = useState(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -145,6 +147,8 @@ function VolunteerProfilePage() {
         if (!volunteers.length) {
           setVolunteer(null)
           setRecommendedOrganizations([])
+          setSimilarVolunteers([])
+          setTeamRecommendation(null)
           setError('No volunteer profiles are available yet. Add one to start seeing community matches.')
           return
         }
@@ -163,38 +167,23 @@ function VolunteerProfilePage() {
         return Promise.all([
           getVolunteerById(selectedVolunteerId),
           getRecommendedOrganizationsForVolunteer(selectedVolunteerId).catch(() => []),
-        ]).then(([volunteerRecord, recommendations]) => {
+          getSimilarVolunteersForVolunteer(selectedVolunteerId).catch(() => []),
+          getSuggestedTeamForVolunteer(selectedVolunteerId).catch(() => null),
+        ]).then(([volunteerRecord, recommendations, similarVolunteerResults, teamResult]) => {
           setVolunteer(volunteerRecord)
           setRecommendedOrganizations(recommendations)
+          setSimilarVolunteers(similarVolunteerResults)
+          setTeamRecommendation(teamResult)
         })
       })
       .catch(() => {
         setVolunteer(null)
         setRecommendedOrganizations([])
+        setSimilarVolunteers([])
+        setTeamRecommendation(null)
         setError('Volunteer profile not found.')
       })
   }, [id, navigate])
-
-  const similarVolunteers = useMemo(() => {
-    if (!volunteer) {
-      return []
-    }
-
-    return findTopSimilarVolunteers(volunteer, volunteerOptions, 3)
-  }, [volunteer, volunteerOptions])
-
-  const teamRecommendation = useMemo(() => {
-    if (!volunteer) {
-      return null
-    }
-
-    return recommendVolunteerTeam(
-      volunteer,
-      recommendedOrganizations[0],
-      volunteerOptions,
-      similarVolunteers,
-    )
-  }, [volunteer, recommendedOrganizations, volunteerOptions, similarVolunteers])
 
   if (error) {
     return <p className="rounded-3xl bg-orange-50 p-6 text-orange-700">{error}</p>

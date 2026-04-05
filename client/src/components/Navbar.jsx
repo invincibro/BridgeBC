@@ -10,7 +10,7 @@ const links = [
   { label: 'Current Volunteer Need', to: '/tasks/new' },
   { label: 'Volunteer Intake', to: '/volunteers/new' },
   { label: 'Volunteer Dashboard', to: '/volunteers/dashboard' },
-    { label: 'Volunteer Alert Demo', to: '/volunteers/alert' },
+  { label: 'Volunteer Alert Demo', to: '/volunteers/alert' },
 ]
 
 function Navbar() {

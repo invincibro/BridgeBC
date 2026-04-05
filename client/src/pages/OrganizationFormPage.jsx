@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Card from '../components/Card.jsx'
 import FormField from '../components/FormField.jsx'
-import { SelectInput, TextInput } from '../components/FormControls.jsx'
+import { SelectInput, TextInput, TogglePillGroup } from '../components/FormControls.jsx'
 import SectionHeader from '../components/SectionHeader.jsx'
+import { toggleListValue } from '../lib/forms.js'
 import { createOrganization } from '../services/api.js'
 
 const orgSizeOptions = [
@@ -14,6 +14,35 @@ const orgSizeOptions = [
 ]
 const provinceOptions = ['BC', 'AB', 'ON', 'QC', 'NS', 'NB', 'PE', 'NL', 'SK', 'MB', 'YT', 'NT', 'NU']
 const countryOptions = ['CA', 'US']
+const urgencyOptions = ['Low', 'Medium', 'High', 'Critical']
+const languageOptions = ['English', 'French', 'Cantonese', 'Mandarin', 'Punjabi', 'Hindi', 'Tagalog']
+const skillOptions = [
+  'Tutoring/mentorship',
+  'Event coordination',
+  'Arts facilitation',
+  'Childcare support',
+  'Driving/transportation',
+  'Cooking/food prep',
+  'Administrative support',
+  'Mental health support',
+  'Outreach/community engagement',
+  'Translation/interpretation',
+  'Data entry',
+  'Social media',
+  'Photography',
+  'Grant writing',
+  'First aid/CPR',
+  'Elder care',
+  'Teaching/training',
+]
+const timeSlotOptions = [
+  { field: 'weekday_morning', label: 'Weekday mornings' },
+  { field: 'weekday_afternoon', label: 'Weekday afternoons' },
+  { field: 'weekday_evening', label: 'Weekday evenings' },
+  { field: 'weekend_morning', label: 'Weekend mornings' },
+  { field: 'weekend_afternoon', label: 'Weekend afternoons' },
+  { field: 'weekend_evening', label: 'Weekend evenings' },
+]
 
 const initialForm = {
   BN: '',
@@ -27,10 +56,45 @@ const initialForm = {
   postal_code: '',
   country: 'CA',
   org_size: 'Small (6-15 staff)',
+  volunteers_currently_needed: 1,
+  volunteer_urgency: 'Medium',
+  skills_needed: [],
+  languages_needed: ['English'],
+  background_check_required: false,
+  weekday_morning: false,
+  weekday_afternoon: false,
+  weekday_evening: false,
+  weekend_morning: false,
+  weekend_afternoon: false,
+  weekend_evening: false,
+}
+
+function deriveAvailabilityPreference(form) {
+  const weekdayCount = [
+    form.weekday_morning,
+    form.weekday_afternoon,
+    form.weekday_evening,
+  ].filter(Boolean).length
+  const weekendCount = [
+    form.weekend_morning,
+    form.weekend_afternoon,
+    form.weekend_evening,
+  ].filter(Boolean).length
+
+  if (weekdayCount === 3 && weekendCount === 0) return 'Weekdays preferred'
+  if (weekdayCount === 0 && weekendCount > 0) return 'Weekends preferred'
+  if (weekdayCount > 0 && weekendCount > 0) return 'Flexible'
+  if (form.weekday_morning) return 'Weekday mornings'
+  if (form.weekday_afternoon) return 'Weekday afternoons'
+  if (form.weekday_evening) return 'Weekday evenings'
+  if (form.weekend_morning) return 'Weekend mornings'
+  if (form.weekend_afternoon) return 'Weekend afternoons'
+  if (form.weekend_evening) return 'Weekend evenings'
+
+  return ''
 }
 
 function OrganizationFormPage() {
-  const navigate = useNavigate()
   const [form, setForm] = useState(initialForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -40,7 +104,12 @@ function OrganizationFormPage() {
     return (event) => {
       setForm((current) => ({
         ...current,
-        [field]: event.target.value,
+        [field]:
+          event.target.type === 'checkbox'
+            ? event.target.checked
+            : field === 'volunteers_currently_needed'
+              ? Number(event.target.value)
+              : event.target.value,
       }))
     }
   }
@@ -51,13 +120,12 @@ function OrganizationFormPage() {
     setError('')
 
     try {
-      const organization = await createOrganization(form)
+      const organization = await createOrganization({
+        ...form,
+        availability_preference: deriveAvailabilityPreference(form),
+      })
       setCreatedOrganization(organization)
       setForm(initialForm)
-
-      window.setTimeout(() => {
-        navigate(`/tasks/new?orgId=${organization.id}`)
-      }, 500)
     } catch (submitError) {
       setError(submitError.message)
     } finally {
@@ -73,8 +141,14 @@ function OrganizationFormPage() {
       />
 
       <section className="mx-auto w-full max-w-4xl">
-        <Card title="Organization profile">
+        <Card title="Organization setup">
           <form className="grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
+            <div className="md:col-span-2">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-moss">
+                Organization
+              </p>
+            </div>
+
             <FormField label="Business number (BN)" htmlFor="BN" required>
               <TextInput
                 id="BN"
@@ -176,6 +250,103 @@ function OrganizationFormPage() {
               />
             </FormField>
 
+            <div className="mt-2 md:col-span-2">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-moss">
+                Current volunteer need
+              </p>
+            </div>
+
+            <FormField label="Number of volunteers currently needed" htmlFor="volunteers_currently_needed">
+              <TextInput
+                id="volunteers_currently_needed"
+                type="number"
+                value={form.volunteers_currently_needed}
+                onChange={updateField('volunteers_currently_needed')}
+              />
+            </FormField>
+
+            <FormField label="Volunteer urgency" htmlFor="volunteer_urgency">
+              <SelectInput
+                id="volunteer_urgency"
+                value={form.volunteer_urgency}
+                onChange={updateField('volunteer_urgency')}
+                options={urgencyOptions}
+              />
+            </FormField>
+
+            <div className="md:col-span-2">
+              <FormField
+                label="Availability preference"
+                htmlFor="weekday_morning"
+                hint="Choose all time slots that usually work for this organization."
+              >
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {timeSlotOptions.map((option) => (
+                    <label
+                      key={option.field}
+                      className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
+                        form[option.field]
+                          ? 'border-pine bg-sky'
+                          : 'border-slate-200 bg-white hover:border-moss'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form[option.field]}
+                        onChange={updateField(option.field)}
+                        className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                      />
+                      <span className="text-sm font-medium text-slate-700">{option.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </FormField>
+            </div>
+
+            <div className="md:col-span-2">
+              <FormField label="Skills needed" htmlFor="skills_needed">
+                <TogglePillGroup
+                  options={skillOptions}
+                  selected={form.skills_needed}
+                  onToggle={(option) =>
+                    setForm((current) => ({
+                      ...current,
+                      skills_needed: toggleListValue(current.skills_needed, option),
+                    }))
+                  }
+                />
+              </FormField>
+            </div>
+
+            <div className="md:col-span-2">
+              <FormField label="Languages needed" htmlFor="languages_needed">
+                <TogglePillGroup
+                  options={languageOptions}
+                  selected={form.languages_needed}
+                  onToggle={(option) =>
+                    setForm((current) => ({
+                      ...current,
+                      languages_needed: toggleListValue(current.languages_needed, option),
+                    }))
+                  }
+                />
+              </FormField>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-sand px-4 py-4">
+                <input
+                  type="checkbox"
+                  checked={form.background_check_required}
+                  onChange={updateField('background_check_required')}
+                  className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
+                />
+                <div>
+                  <p className="font-medium text-pine">Background check required</p>
+                </div>
+              </label>
+            </div>
+
             {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
             {createdOrganization && (
               <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
@@ -189,7 +360,7 @@ function OrganizationFormPage() {
                 disabled={saving}
                 className="rounded-full bg-pine px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#23473d] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {saving ? 'Saving organization...' : 'Save organization profile'}
+                {saving ? 'Saving organization...' : 'Save organization setup'}
               </button>
             </div>
           </form>

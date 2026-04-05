@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
 const { explainJobFit, scoreJob } = require("./lib/scoreJob");
+const { recommendVolunteerTeam } = require("./lib/teamMatching");
+const { findTopSimilarVolunteers } = require("./lib/volunteerSimilarity");
 const { parseAvailability } = require("./lib/parseAvailability")
 
 const app = express();
@@ -323,6 +325,68 @@ app.get("/api/volunteers/:id/recommended-organizations", async (req, res) => {
     res.json(ranked);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/volunteers/:id/similar-volunteers", async (req, res) => {
+  try {
+    const { rows: volunteerRows } = await pool.query(
+      "SELECT * FROM volunteers ORDER BY volunteer_id"
+    );
+
+    const volunteers = volunteerRows.map(normalizeVolunteer);
+    const currentVolunteer = volunteers.find(
+      (volunteer) => volunteer.volunteer_id === req.params.id
+    );
+
+    if (!currentVolunteer) {
+      return res.status(404).json({ message: "Volunteer not found" });
+    }
+
+    return res.json(findTopSimilarVolunteers(currentVolunteer, volunteers, 3));
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/volunteers/:id/suggested-team", async (req, res) => {
+  try {
+    const { rows: volunteerRows } = await pool.query(
+      "SELECT * FROM volunteers ORDER BY volunteer_id"
+    );
+    const volunteers = volunteerRows.map(normalizeVolunteer);
+    const currentVolunteer = volunteers.find(
+      (volunteer) => volunteer.volunteer_id === req.params.id
+    );
+
+    if (!currentVolunteer) {
+      return res.status(404).json({ message: "Volunteer not found" });
+    }
+
+    const { rows: organizations } = await pool.query("SELECT * FROM organizations");
+    const featuredOrganization = organizations
+      .map((org) => ({
+        ...normalizeOrganization(org),
+        score: scoreJob(currentVolunteer, org),
+        match_reasons: explainJobFit(currentVolunteer, org),
+      }))
+      .sort((first, second) => second.score - first.score)[0];
+
+    if (!featuredOrganization) {
+      return res.json(null);
+    }
+
+    const similarVolunteers = findTopSimilarVolunteers(currentVolunteer, volunteers, 3);
+    const teamRecommendation = recommendVolunteerTeam(
+      currentVolunteer,
+      featuredOrganization,
+      volunteers,
+      similarVolunteers
+    );
+
+    return res.json(teamRecommendation);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 });
 
