@@ -4,18 +4,25 @@ export default {
   theme: {
     extend: {
       colors: {
+        primary: '#F28C38',
+        secondary: '#6BBF73',
+        accent: '#F6C445',
+        background: '#F5EDE4',
+        'text-primary': '#2F3E46',
+        'text-secondary': '#6B7280',
         sand: '#f6f2ea',
-        pine: '#19362e',
-        moss: '#5b7f71',
-        ember: '#d97745',
-        sky: '#d8ebe5',
+        pine: '#2F3E46',
+        moss: '#6BBF73',
+        ember: '#F28C38',
+        sky: '#dcefe1',
       },
       boxShadow: {
-        panel: '0 18px 40px rgba(25, 54, 46, 0.12)',
+        panel: '0 16px 36px rgba(86, 70, 48, 0.10)',
+        soft: '0 10px 24px rgba(86, 70, 48, 0.08)',
       },
       fontFamily: {
-        sans: ['"Avenir Next"', '"Segoe UI"', 'sans-serif'],
-        serif: ['Georgia', '"Times New Roman"', 'serif'],
+        sans: ['"Open Sans"', '"Segoe UI"', 'sans-serif'],
+        serif: ['"Poppins"', '"Open Sans"', 'sans-serif'],
       },
     },
   },

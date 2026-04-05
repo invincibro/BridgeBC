@@ -72,14 +72,14 @@ function LandingPage() {
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Try outreach, remote, or weekly"
-              className="mt-3 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-moss"
+              className="warm-input mt-3"
             />
 
             <div className="mt-5 space-y-3">
               {error && <p className="text-sm text-orange-700">{error}</p>}
               {!error &&
                 filteredRoles.slice(0, 4).map((role) => (
-                  <div key={role.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
+                  <div key={role.id} className="rounded-2xl border border-white/80 bg-[#fff7ef] p-4 shadow-soft">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div>
                         <p className="font-semibold text-pine">{role.task_title || role.title}</p>

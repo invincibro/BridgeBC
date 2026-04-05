@@ -1,14 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Global styles keep the visual system in one place for quick iteration. */
 :root {
-  font-family: 'Avenir Next', 'Segoe UI', sans-serif;
-  color: #163028;
-  background:
-    radial-gradient(circle at top, rgba(216, 235, 229, 0.9), transparent 38%),
-    linear-gradient(180deg, #f5efe3 0%, #fcfaf6 48%, #f2f7f4 100%);
+  font-family: 'Open Sans', 'Segoe UI', sans-serif;
+  color: #2f3e46;
+  background: #f5ede4;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,18 +31,25 @@ body {
 
 @layer base {
   body {
-    @apply text-slate-800;
+    @apply text-[#2F3E46];
+    background-image:
+      linear-gradient(rgba(255, 249, 242, 0.78), rgba(255, 249, 242, 0.78)),
+      url('./assets/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 
   h1,
   h2,
   h3,
   h4 {
-    @apply font-serif text-pine;
+    @apply font-serif font-semibold text-[#2F3E46];
   }
 
   p {
-    @apply leading-7 text-slate-600;
+    @apply leading-7 text-[#6B7280];
   }
 
   a {
@@ -52,13 +59,37 @@ body {
 
 @layer components {
   .panel {
-    @apply rounded-3xl border border-white/70 bg-white/85 shadow-panel backdrop-blur;
+    @apply rounded-[1.75rem] border border-white/70 bg-[#fffaf4] shadow-panel backdrop-blur;
   }
 
   .hero-grid {
     background-image:
-      linear-gradient(rgba(25, 54, 46, 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(25, 54, 46, 0.08) 1px, transparent 1px);
+      linear-gradient(rgba(107, 191, 115, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(107, 191, 115, 0.08) 1px, transparent 1px);
     background-size: 32px 32px;
+  }
+
+  .surface-card {
+    @apply rounded-2xl border border-white/80 bg-[#fffaf6] shadow-soft;
+  }
+
+  .warm-input {
+    @apply w-full rounded-2xl border border-[#eadfcf] bg-[#fffaf5] px-4 py-3 text-[#2F3E46] outline-none transition duration-200 placeholder:text-slate-400 focus:border-secondary focus:ring-2 focus:ring-[#d7edd9];
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:scale-105 hover:bg-[#dc7623];
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-full bg-[#e4f3e5] px-5 py-3 text-sm font-semibold text-[#2F3E46] shadow-soft transition duration-200 hover:scale-105 hover:bg-[#d7edd9];
+  }
+
+  .pill-button {
+    @apply rounded-full border border-[#eadfcf] bg-[#fffaf5] px-4 py-2 text-sm font-medium text-[#2F3E46] transition duration-200 hover:scale-[1.02] hover:border-[#8ecc95] hover:bg-[#eef7ea];
+  }
+
+  .pill-button-active {
+    @apply rounded-full border border-primary bg-primary px-4 py-2 text-sm font-medium text-white shadow-soft transition duration-200 hover:scale-[1.02] hover:bg-[#dc7623];
   }
 }

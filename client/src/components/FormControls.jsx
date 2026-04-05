@@ -6,7 +6,7 @@ export function TextInput({ id, value, onChange, placeholder, type = 'text' }) {
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-moss focus:ring-2 focus:ring-sky/60"
+      className="warm-input"
     />
   )
 }
@@ -19,7 +19,7 @@ export function TextArea({ id, value, onChange, placeholder, rows = 4 }) {
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-moss focus:ring-2 focus:ring-sky/60"
+      className="warm-input"
     />
   )
 }
@@ -30,7 +30,7 @@ export function SelectInput({ id, value, onChange, options }) {
       id={id}
       value={value}
       onChange={onChange}
-      className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-800 outline-none transition focus:border-moss focus:ring-2 focus:ring-sky/60"
+      className="warm-input"
     >
       {options.map((option) => (
         <option key={option.value || option} value={option.value || option}>
@@ -52,11 +52,7 @@ export function TogglePillGroup({ options, selected, onToggle }) {
             key={option}
             type="button"
             onClick={() => onToggle(option)}
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-              active
-                ? 'border-pine bg-pine text-white'
-                : 'border-slate-200 bg-white text-slate-700 hover:border-moss hover:bg-sky'
-            }`}
+            className={active ? 'pill-button-active' : 'pill-button'}
           >
             {option}
           </button>

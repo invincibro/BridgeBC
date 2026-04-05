@@ -271,7 +271,7 @@ function VolunteerIntakePage() {
             </FormField>
 
             <div className="md:col-span-2">
-              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-sand px-4 py-4">
+              <label className="flex items-start gap-3 rounded-2xl border border-[#eadfcf] bg-[#fff7ef] px-4 py-4 shadow-soft transition duration-200">
                 <input
                   type="checkbox"
                   checked={form.has_vehicle}
@@ -290,8 +290,15 @@ function VolunteerIntakePage() {
             {error && <p className="md:col-span-2 text-sm text-orange-700">{error}</p>}
 
             {createdVolunteer && (
-              <div className="md:col-span-2 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
-                Saved <span className="font-semibold">{createdVolunteer.first_name} {createdVolunteer.last_name}</span>.
+              <div className="md:col-span-2 rounded-2xl border border-[#b8dfbc] bg-[#eef7ea] p-4 text-sm text-[#2e6840] shadow-soft">
+                Saved{' '}
+                <span className="font-semibold">
+                  {createdVolunteer.name ||
+                    `${createdVolunteer.first_name || ''} ${
+                      createdVolunteer.last_name || ''
+                    }`.trim()}
+                </span>
+                . This person is now available for matching.
               </div>
             )}
 
@@ -299,7 +306,7 @@ function VolunteerIntakePage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-full bg-pine px-5 py-3 text-sm font-semibold text-white hover:bg-[#23473d] disabled:opacity-70"
+                className="button-primary disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {saving ? 'Saving volunteer...' : 'Save volunteer profile'}
               </button>
