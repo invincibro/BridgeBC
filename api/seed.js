@@ -37,7 +37,7 @@ function parseAvailability(availability) {
   const isMorning   = val.includes("morning");
   const isAfternoon = val.includes("afternoon");
   const isEvening   = val.includes("evening");
-  const isOnly      = val.includes("only") && !isMorning && !isAfternoon && !isEvening;
+  const isOnly      = !isMorning && !isAfternoon && !isEvening;
 
   if (isWeekday && isOnly) {
     result.weekday_morning = result.weekday_afternoon = result.weekday_evening = true;
