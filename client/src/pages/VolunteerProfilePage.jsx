@@ -181,7 +181,7 @@ function VolunteerProfilePage() {
               </p>
             )}
 
-            {recommendedOrganizations.slice(0, 6).map((organization) => (
+            {recommendedOrganizations.map((organization) => (
               <div key={organization.id} className="rounded-2xl border border-slate-100 bg-sand p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -192,7 +192,7 @@ function VolunteerProfilePage() {
                       {organization.city || 'Remote'} • {organization.sector || 'General'}
                     </p>
                   </div>
-                  <Badge tone="success">{organization.score} score</Badge>
+                  <Badge tone="success">{organization.score.toFixed(2)} score</Badge>
                 </div>
 
                 <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
