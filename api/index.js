@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const { Pool } = require("pg");
-const { scoreJob } = require("./scorer/scoreJob");
+const { scoreJob } = require("./lib/scoreJob");
+const { parseAvailability } = require("./lib/parseAvailability")
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -61,46 +62,20 @@ function normalizeTask(row) {
     organization,
   };
 }
+function availabilityBooleansToList(row) {
+  const result = [];
 
-function deriveAvailabilityPreferenceFromSlots(payload) {
-  const weekdayCount = [
-    payload.weekday_morning,
-    payload.weekday_afternoon,
-    payload.weekday_evening,
-  ].filter(Boolean).length;
+  if (row.weekday_morning) result.push("Weekday mornings");
+  if (row.weekday_afternoon) result.push("Weekday afternoons");
+  if (row.weekday_evening) result.push("Weekday evenings");
+  if (row.weekend_morning) result.push("Weekend mornings");
+  if (row.weekend_afternoon) result.push("Weekend afternoons");
+  if (row.weekend_evening) result.push("Weekend evenings");
 
-  const weekendCount = [
-    payload.weekend_morning,
-    payload.weekend_afternoon,
-    payload.weekend_evening,
-  ].filter(Boolean).length;
-
-  if (weekdayCount === 3 && weekendCount === 0) {
-    return "Weekdays preferred";
-  }
-
-  if (weekdayCount === 0 && weekendCount > 0) {
-    return "Weekends";
-  }
-
-  if (weekdayCount > 0 && weekendCount > 0) {
-    return "Flexible";
-  }
-
-  if (payload.weekday_morning) return "Weekday mornings";
-  if (payload.weekday_afternoon) return "Weekday afternoons";
-  if (payload.weekday_evening) return "Weekday evenings";
-
-  return null;
+  return result;
 }
-
 function normalizeVolunteer(row) {
-  const availability = row.availability
-    ? row.availability
-      .split(";")
-      .map((item) => item.trim())
-      .filter(Boolean)
-    : [];
+  const availability = availabilityBooleansToList(row)
 
   return {
     id: row.volunteer_id,
@@ -112,7 +87,7 @@ function normalizeVolunteer(row) {
     languages_spoken: row.languages_spoken || [],
     skills: row.skills || [],
     interests: row.cause_areas_of_interest || [],
-    availability,
+    availability:availability,
     hours_available_per_month: row.hours_available_per_month || 0,
     experience_level: row.prior_volunteer_experience || "None",
     has_vehicle: row.has_vehicle,
@@ -194,6 +169,12 @@ app.post("/api/volunteers", async (req, res) => {
     prior_volunteer_experience,
     has_vehicle,
     background_check_status,
+    weekday_morning,
+    weekday_afternoon,
+    weekday_evening,
+    weekend_morning,
+    weekend_afternoon,
+    weekend_evening,
   } = req.body;
 
   if (!first_name || !last_name) {
@@ -201,23 +182,38 @@ app.post("/api/volunteers", async (req, res) => {
   }
 
   try {
-    const nextIdResult = await pool.query(
-      `SELECT CONCAT('VOL-', LPAD(COALESCE(MAX(id), 0)::text, 3, '0')) AS current_code,
-              COALESCE(MAX(id), 0) + 1 AS next_number
-       FROM volunteers`
-    );
+    const nextIdResult = await pool.query(`
+      SELECT COALESCE(MAX(id),0)+1 AS next_number
+      FROM volunteers
+    `);
 
     const volunteerCode = `VOL-${String(nextIdResult.rows[0].next_number).padStart(3, "0")}`;
 
     const { rows } = await pool.query(
       `INSERT INTO volunteers (
-        volunteer_id, first_name, last_name, age, neighbourhood, languages_spoken, skills,
-        cause_areas_of_interest, availability, hours_available_per_month,
-        prior_volunteer_experience, has_vehicle, background_check_status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
-      RETURNING volunteer_id, first_name, last_name, age, neighbourhood, languages_spoken,
-                skills, cause_areas_of_interest, availability, hours_available_per_month,
-                prior_volunteer_experience, has_vehicle, background_check_status`,
+        volunteer_id,
+        first_name,
+        last_name,
+        neighbourhood,
+        languages_spoken,
+        skills,
+        cause_areas_of_interest,
+        hours_available_per_month,
+        prior_volunteer_experience,
+        has_vehicle,
+        background_check_status,
+        weekday_morning,
+        weekday_afternoon,
+        weekday_evening,
+        weekend_morning,
+        weekend_afternoon,
+        weekend_evening
+      )
+      VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,
+        $12,$13,$14,$15,$16,$17
+      )
+      RETURNING *`,
       [
         volunteerCode,
         first_name,
@@ -232,10 +228,16 @@ app.post("/api/volunteers", async (req, res) => {
         mapVolunteerExperience(prior_volunteer_experience),
         Boolean(has_vehicle),
         mapBackgroundStatus(background_check_status),
+        Boolean(weekday_morning),
+        Boolean(weekday_afternoon),
+        Boolean(weekday_evening),
+        Boolean(weekend_morning),
+        Boolean(weekend_afternoon),
+        Boolean(weekend_evening),
       ]
     );
 
-    res.status(201).json(normalizeVolunteer(rows[0]));
+    res.status(201).json(rows[0]);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
