@@ -8,8 +8,10 @@ const { parseAvailability } = require("./lib/parseAvailability")
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const DATABASE_URL =
+  process.env.DATABASE_URL || "postgresql://admin:secret@localhost:6543/appdb";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: DATABASE_URL });
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
@@ -37,6 +39,19 @@ function normalizeOrganization(row) {
   };
 }
 
+function deriveAvailabilityPreferenceFromSlots(payload = {}) {
+  const labels = [];
+
+  if (payload.weekday_morning) labels.push("Weekday mornings");
+  if (payload.weekday_afternoon) labels.push("Weekday afternoons");
+  if (payload.weekday_evening) labels.push("Weekday evenings");
+  if (payload.weekend_morning) labels.push("Weekend mornings");
+  if (payload.weekend_afternoon) labels.push("Weekend afternoons");
+  if (payload.weekend_evening) labels.push("Weekend evenings");
+
+  return labels.join("; ");
+}
+
 
 function availabilityBooleansToList(row) {
   const result = [];
@@ -54,7 +69,12 @@ function normalizeVolunteer(row) {
   const availability = availabilityBooleansToList(row)
 
   return {
-    ...row, availability: availability
+    ...row,
+    id: row.volunteer_id || row.id,
+    volunteer_id: row.volunteer_id,
+    name: `${row.first_name || ""} ${row.last_name || ""}`.trim(),
+    experience_level: row.prior_volunteer_experience || "None",
+    availability,
   };
 }
 
@@ -393,5 +413,11 @@ app.get("/api/volunteers/:id/suggested-team", async (req, res) => {
   }
 });
 
+app.get("/api/continuity-notes", async (req, res) => {
+  res.json([]);
+});
 
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
 

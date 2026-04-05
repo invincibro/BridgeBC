@@ -181,7 +181,7 @@ function VolunteerProfilePage() {
         setRecommendedOrganizations([])
         setSimilarVolunteers([])
         setTeamRecommendation(null)
-        setError('Volunteer profile not found.')
+        setError('Unable to load the volunteer dashboard right now. Please check that the API server and database are running.')
       })
   }, [id, navigate])
 
