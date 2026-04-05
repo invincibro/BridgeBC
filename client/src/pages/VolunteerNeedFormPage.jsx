@@ -28,14 +28,6 @@ const skillOptions = [
   'Elder care',
   'Teaching/training',
 ]
-const timeSlotOptions = [
-  { field: 'weekday_morning', label: 'Weekday mornings' },
-  { field: 'weekday_afternoon', label: 'Weekday afternoons' },
-  { field: 'weekday_evening', label: 'Weekday evenings' },
-  { field: 'weekend_morning', label: 'Weekend mornings' },
-  { field: 'weekend_afternoon', label: 'Weekend afternoons' },
-  { field: 'weekend_evening', label: 'Weekend evenings' },
-]
 
 const initialForm = {
   org_id: '',
@@ -43,48 +35,8 @@ const initialForm = {
   volunteer_urgency: 'Medium',
   skills_needed: [],
   languages_needed: ['English'],
+  availability_preference: '',
   background_check_required: false,
-  weekday_morning: false,
-  weekday_afternoon: false,
-  weekday_evening: false,
-  weekend_morning: false,
-  weekend_afternoon: false,
-  weekend_evening: false,
-}
-
-function deriveAvailabilityPreference(form) {
-  const weekdayCount = [
-    form.weekday_morning,
-    form.weekday_afternoon,
-    form.weekday_evening,
-  ].filter(Boolean).length
-
-  const weekendCount = [
-    form.weekend_morning,
-    form.weekend_afternoon,
-    form.weekend_evening,
-  ].filter(Boolean).length
-
-  if (weekdayCount === 3 && weekendCount === 0) {
-    return 'Weekdays preferred'
-  }
-
-  if (weekdayCount === 0 && weekendCount > 0) {
-    return 'Weekends preferred'
-  }
-
-  if (weekdayCount > 0 && weekendCount > 0) {
-    return 'Flexible'
-  }
-
-  if (form.weekday_morning) return 'Weekday mornings'
-  if (form.weekday_afternoon) return 'Weekday afternoons'
-  if (form.weekday_evening) return 'Weekday evenings'
-  if (form.weekend_morning) return 'Weekend mornings'
-  if (form.weekend_afternoon) return 'Weekend afternoons'
-  if (form.weekend_evening) return 'Weekend evenings'
-
-  return ''
 }
 
 function VolunteerNeedFormPage() {
@@ -138,10 +90,7 @@ function VolunteerNeedFormPage() {
     setSuccessMessage('')
 
     try {
-      await createTask({
-        ...form,
-        availability_preference: deriveAvailabilityPreference(form),
-      })
+      await createTask(form)
       setSuccessMessage('Current volunteer need saved successfully.')
     } catch (submitError) {
       setError(submitError.message)
@@ -189,38 +138,14 @@ function VolunteerNeedFormPage() {
                 options={urgencyOptions}
               />
             </FormField>
-
-            <div className="md:col-span-2">
-              <FormField
-                label="Availability preference"
-                htmlFor="weekday_morning"
-                hint="Choose all time slots that usually work for this organization."
-              >
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {timeSlotOptions.map((option) => (
-                    <label
-                      key={option.field}
-                      className={`flex items-start gap-3 rounded-2xl border px-4 py-3 transition ${
-                        form[option.field]
-                          ? 'border-pine bg-sky'
-                          : 'border-slate-200 bg-white hover:border-moss'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={form[option.field]}
-                        onChange={updateField(option.field)}
-                        className="mt-1 h-4 w-4 rounded border-slate-300 text-pine focus:ring-moss"
-                      />
-                      <span className="text-sm font-medium text-slate-700">{option.label}</span>
-                    </label>
-                  ))}
-                </div>
-                <p className="mt-3 text-sm text-slate-500">
-                  Saved as: {deriveAvailabilityPreference(form) || 'No preference selected yet'}
-                </p>
-              </FormField>
-            </div>
+            <FormField label="Availability preference" htmlFor="availability_preference">
+              <TextInput
+                id="availability_preference"
+                value={form.availability_preference}
+                onChange={updateField('availability_preference')}
+                placeholder="Weekdays preferred"
+              />
+            </FormField>
 
             <div className="md:col-span-2">
               <FormField label="Skills needed" htmlFor="skills_needed">

@@ -302,6 +302,7 @@ function VolunteerProfilePage() {
                 </div>
               </div>
 
+<<<<<<< ours
               <ul className="mt-5 space-y-4">
                 {impactHighlights.map((highlight) => (
                   <li key={highlight} className="rounded-2xl bg-[#eef6f1] px-4 py-3">
@@ -309,6 +310,16 @@ function VolunteerProfilePage() {
                   </li>
                 ))}
               </ul>
+=======
+              <div className="flex flex-col items-start gap-3 sm:items-end">
+                <div className="rounded-full border border-[#e8e0d3] bg-[#fbf7f0] px-4 py-2 text-sm font-medium text-slate-600">
+                  {volunteerDescriptionParts.join(' • ')}
+                </div>
+                <Link to="/volunteers/new" className="button-secondary">
+                  Update profile
+                </Link>
+              </div>
+>>>>>>> theirs
             </div>
 
             <div className="rounded-[2.5rem] bg-[#dfeeee] px-6 py-6 shadow-sm">
