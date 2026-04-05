@@ -3,7 +3,7 @@ const API_BASE = '/api'
 
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE}${path}`)
-
+  console.log(response)
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`)
   }
@@ -40,6 +40,10 @@ export function getOrganizations() {
   return fetchJson('/organizations')
 }
 
+export function getOrganizationById(id) {
+  return fetchJson(`/organizations/${id}`)
+}
+
 export function createOrganization(payload) {
   return postJson('/organizations', payload)
 }
@@ -62,6 +66,10 @@ export function getVolunteers() {
 
 export function getVolunteerById(id) {
   return fetchJson(`/volunteers/${id}`)
+}
+
+export function getVolunteerAlerts(id) {
+  return fetchJson('/volunteers')
 }
 
 export function getRecommendedOrganizationsForVolunteer(id) {

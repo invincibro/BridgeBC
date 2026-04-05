@@ -36,5 +36,26 @@ services:
       db:
         condition: service_healthy
 
+  alert:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: alert_service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-secret}@db:5432/${POSTGRES_DB:-appdb}
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 8080
+    command: ["node", "jobs/alertService.js"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./api:/app        # hot-reload in development
+      - /app/node_modules # prevent host from overwriting container modules
+
+
 volumes:
   postgres_data:

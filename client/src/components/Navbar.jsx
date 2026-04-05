@@ -6,9 +6,11 @@ const links = [
   { label: 'Home', to: '/' },
   { label: 'Nonprofit Dashboard', to: '/dashboard' },
   { label: 'Organization Setup', to: '/organizations/new' },
+  { label: 'Organization Details', to: '/organizations/23' },
   { label: 'Current Volunteer Need', to: '/tasks/new' },
   { label: 'Volunteer Intake', to: '/volunteers/new' },
   { label: 'Volunteer Dashboard', to: '/volunteers/dashboard' },
+    { label: 'Volunteer Alert Demo', to: '/volunteers/alert' },
 ]
 
 function Navbar() {

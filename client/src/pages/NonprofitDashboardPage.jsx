@@ -4,11 +4,12 @@ import SectionHeader from '../components/SectionHeader.jsx'
 import { getOrganizations } from '../services/api.js'
 
 const urgencyOptions = ['All', 'Critical', 'High', 'Medium', 'Low']
+import { useNavigate } from 'react-router-dom'
 
 function NonprofitDashboardPage() {
   const [roles, setRoles] = useState([])
   const [selectedUrgency, setSelectedUrgency] = useState('All')
-
+const navigate = useNavigate()
   useEffect(() => {
     getOrganizations().then(setRoles).catch(() => setRoles([]))
   }, [])
@@ -77,7 +78,7 @@ function NonprofitDashboardPage() {
           <div className="space-y-4">
             {filteredRoles.map((role) => (
               <div key={role.id} className="rounded-2xl border border-slate-100 p-4">
-                <div>
+                <div onClick={()=>{navigate(`/organizations/${role.id}`)}}>
                   <p className="font-semibold text-pine">{role.account_name || role.legal_name}</p>
                   <p className="text-sm text-slate-500">
                     <strong>Skills:</strong> {role.skills_needed?.join(', ')} •{' '}

@@ -7,6 +7,8 @@ import OrganizationFormPage from './pages/OrganizationFormPage.jsx'
 import VolunteerIntakePage from './pages/VolunteerIntakePage.jsx'
 import VolunteerNeedFormPage from './pages/VolunteerNeedFormPage.jsx'
 import VolunteerProfilePage from './pages/VolunteerProfilePage.jsx'
+import AlertProfilePage from './pages/AlertProfilePage.jsx'
+import OrganizationProfilePage from './pages/OrganizationDetailPage.jsx'
 
 function App() {
   return (
@@ -15,9 +17,12 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/dashboard" element={<NonprofitDashboardPage />} />
         <Route path="/organizations/new" element={<OrganizationFormPage />} />
+        <Route path="/organizations/:id" element={<OrganizationProfilePage />} />
         <Route path="/tasks/new" element={<VolunteerNeedFormPage />} />
         <Route path="/volunteers/new" element={<VolunteerIntakePage />} />
         <Route path="/volunteers/dashboard" element={<VolunteerProfilePage />} />
+        <Route path="/volunteers/alert" element={<AlertProfilePage />} />
+        <Route path="/volunteers/:id/alert" element={<AlertProfilePage />} />
         <Route path="/volunteers/:id" element={<VolunteerProfilePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
