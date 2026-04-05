@@ -52,21 +52,7 @@ function normalizeVolunteer(row) {
   const availability = availabilityBooleansToList(row)
 
   return {
-    id: row.volunteer_id,
-    volunteer_id: row.volunteer_id,
-    first_name: row.first_name,
-    last_name: row.last_name,
-    name: `${row.first_name} ${row.last_name}`.trim(),
-    neighbourhood: row.neighbourhood || "",
-    languages_spoken: row.languages_spoken || [],
-    skills: row.skills || [],
-    cause_areas_of_interest: row.cause_areas_of_interest || [],
-    availability: availability,
-    hours_available_per_month: row.hours_available_per_month || 0,
-    experience_level: row.prior_volunteer_experience || "None",
-    has_vehicle: row.has_vehicle,
-    background_check_status: row.background_check_status || "Not yet",
-    pastRoles: [],
+    ...row, availability: availability
   };
 }
 
@@ -219,6 +205,15 @@ app.post("/api/volunteers", async (req, res) => {
 
 
 // --- Organizations ---
+app.get("/api/organizations/:id", async (req, res) => {
+  try {
+    const { rows } = await pool.query("SELECT * FROM organizations WHERE id = $1", [req.params.id]);
+    res.json(rows.map(normalizeOrganization));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/organizations", async (req, res) => {
   try {
     const { rows } = await pool.query("SELECT * FROM organizations ORDER BY legal_name");
