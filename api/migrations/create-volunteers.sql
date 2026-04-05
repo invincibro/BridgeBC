@@ -20,7 +20,7 @@ CREATE TABLE volunteers
         weekday_afternoon          BOOLEAN NOT NULL DEFAULT FALSE                                                                                     ,
         weekday_evening            BOOLEAN NOT NULL DEFAULT FALSE                                                                                     ,
         weekend_morning            BOOLEAN NOT NULL DEFAULT FALSE                                                                                     ,
-        weekend_afternoon          BOOLEAN NOT NULL DEFAULT FALSE                                                                                     ,
+        weekend_afternoon          BOOLEAN  NOT NULL DEFAULT FALSE                                                                                     ,
         weekend_evening            BOOLEAN NOT NULL DEFAULT FALSE
     )
 ;

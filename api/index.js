@@ -184,13 +184,14 @@ app.post("/api/volunteers", async (req, res) => {
   const {
     first_name,
     last_name,
+    age,
     neighbourhood,
     languages_spoken,
     skills,
-    interests,
+    cause_areas_of_interest,
     availability,
     hours_available_per_month,
-    experience_level,
+    prior_volunteer_experience,
     has_vehicle,
     background_check_status,
   } = req.body;
@@ -210,24 +211,25 @@ app.post("/api/volunteers", async (req, res) => {
 
     const { rows } = await pool.query(
       `INSERT INTO volunteers (
-        volunteer_id, first_name, last_name, neighbourhood, languages_spoken, skills,
+        volunteer_id, first_name, last_name, age, neighbourhood, languages_spoken, skills,
         cause_areas_of_interest, availability, hours_available_per_month,
         prior_volunteer_experience, has_vehicle, background_check_status
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
-      RETURNING volunteer_id, first_name, last_name, neighbourhood, languages_spoken,
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+      RETURNING volunteer_id, first_name, last_name, age, neighbourhood, languages_spoken,
                 skills, cause_areas_of_interest, availability, hours_available_per_month,
                 prior_volunteer_experience, has_vehicle, background_check_status`,
       [
         volunteerCode,
         first_name,
         last_name,
+        age || null,
         neighbourhood || null,
         languages_spoken || [],
         skills || [],
-        interests || [],
+        cause_areas_of_interest || [],
         Array.isArray(availability) ? availability.join("; ") : availability || null,
         Number(hours_available_per_month || 0),
-        mapVolunteerExperience(experience_level),
+        mapVolunteerExperience(prior_volunteer_experience),
         Boolean(has_vehicle),
         mapBackgroundStatus(background_check_status),
       ]
