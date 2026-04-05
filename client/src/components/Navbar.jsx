@@ -4,10 +4,9 @@ import logo from '../assets/bridgebc-logo.png'
 
 const links = [
   { label: 'Home', to: '/' },
-  { label: 'Nonprofit Dashboard', to: '/dashboard' },
+  { label: 'Open roles', to: '/dashboard' },
   { label: 'Organization Setup', to: '/organizations/new' },
   { label: 'Volunteer Intake', to: '/volunteers/new' },
-  { label: 'Volunteer Matches', to: '/matches' },
   { label: 'Volunteer Dashboard', to: '/volunteers/dashboard' },
 ]
 
