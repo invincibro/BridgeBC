@@ -61,7 +61,7 @@ function normalizeVolunteer(row) {
     languages_spoken: row.languages_spoken || [],
     skills: row.skills || [],
     cause_areas_of_interest: row.cause_areas_of_interest || [],
-    availability:availability,
+    availability: availability,
     hours_available_per_month: row.hours_available_per_month || 0,
     experience_level: row.prior_volunteer_experience || "None",
     has_vehicle: row.has_vehicle,
@@ -306,6 +306,7 @@ app.post("/api/organizations", async (req, res) => {
 
 // --- Recommended organizations for a volunteer ---
 app.get("/api/volunteers/:id/recommended-organizations", async (req, res) => {
+  const threshold = 0.5
   try {
     const { rows: volunteers } = await pool.query(
       "SELECT * FROM volunteers WHERE volunteer_id = $1",
@@ -317,7 +318,7 @@ app.get("/api/volunteers/:id/recommended-organizations", async (req, res) => {
     const { rows: organizations } = await pool.query("SELECT * FROM organizations");
 
     const ranked = organizations
-      .map((org) => ({ ...org, score: scoreJob(volunteer, org) }))
+      .map((org) => ({ ...org, score: scoreJob(volunteer, org) })).filter((org) => (org.score >= threshold))
       .sort((a, b) => b.score - a.score);
 
     res.json(ranked);
