@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Badge from '../components/Badge.jsx'
 import Card from '../components/Card.jsx'
+import SuggestedVolunteerTeam from '../components/SuggestedVolunteerTeam.jsx'
+import { recommendVolunteerTeam } from '../lib/teamMatching.js'
 import { findTopSimilarVolunteers } from '../lib/volunteerSimilarity.js'
 import {
   getRecommendedOrganizationsForVolunteer,
@@ -181,6 +183,19 @@ function VolunteerProfilePage() {
     return findTopSimilarVolunteers(volunteer, volunteerOptions, 3)
   }, [volunteer, volunteerOptions])
 
+  const teamRecommendation = useMemo(() => {
+    if (!volunteer) {
+      return null
+    }
+
+    return recommendVolunteerTeam(
+      volunteer,
+      recommendedOrganizations[0],
+      volunteerOptions,
+      similarVolunteers,
+    )
+  }, [volunteer, recommendedOrganizations, volunteerOptions, similarVolunteers])
+
   if (error) {
     return <p className="rounded-3xl bg-orange-50 p-6 text-orange-700">{error}</p>
   }
@@ -283,92 +298,99 @@ function VolunteerProfilePage() {
 
         <section className="space-y-6">
           {strongestRecommendation && (
-            <article className="rounded-[2.5rem] bg-[#ffe7b0] p-6 shadow-sm sm:p-7">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="max-w-2xl">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone="success">Featured fit</Badge>
+            <div className="space-y-6">
+              <article className="rounded-[2.5rem] bg-[#ffe7b0] p-6 shadow-sm sm:p-7">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="max-w-2xl">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge tone="success">Featured fit</Badge>
+                    </div>
+                    <h2 className="mt-4 text-3xl text-pine">
+                      {strongestRecommendation.account_name || strongestRecommendation.legal_name}
+                    </h2>
+                    <p className="mt-2 text-sm text-slate-600">
+                      {strongestRecommendation.city || 'Remote welcome'} •{' '}
+                      {strongestRecommendation.sector || 'Community support'}
+                    </p>
+                    <p className="mt-4 max-w-xl text-base text-slate-700">{getRoleImpact(strongestRecommendation)}</p>
                   </div>
-                  <h2 className="mt-4 text-3xl text-pine">
-                    {strongestRecommendation.account_name || strongestRecommendation.legal_name}
-                  </h2>
-                  <p className="mt-2 text-sm text-slate-600">
-                    {strongestRecommendation.city || 'Remote welcome'} •{' '}
-                    {strongestRecommendation.sector || 'Community support'}
-                  </p>
-                  <p className="mt-4 max-w-xl text-base text-slate-700">{getRoleImpact(strongestRecommendation)}</p>
-                </div>
 
-                <div className="rounded-[1.7rem] bg-white px-5 py-4 text-right shadow-sm">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">
-                    {getScoreLabel(Number(strongestRecommendation.score || 0))}
-                  </p>
-                  <p className="mt-2 text-4xl font-semibold text-pine">
-                    {Number(strongestRecommendation.score || 0).toFixed(2)}
-                  </p>
-                  <p className="mt-1 text-xs text-slate-500">Score</p>
-                </div>
-              </div>
-
-              <div className="mt-6 rounded-[1.8rem] bg-white/70 p-5">
-                <p className="text-sm font-semibold text-pine">Why it matches</p>
-                <ul className="mt-3 space-y-2">
-                  {getMatchReasons(volunteer, strongestRecommendation).map((reason) => (
-                    <li key={reason} className="flex gap-3 text-sm text-slate-700">
-                      <span aria-hidden="true" className="mt-1 text-pine">
-                        ✦
-                      </span>
-                      <span>{reason}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-5 grid gap-3 md:grid-cols-4">
-                <div className="rounded-[1.4rem] bg-white/80 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                    Urgency
-                  </p>
-                  <div className="mt-2">
-                    <Badge tone={getUrgencyTone(strongestRecommendation.volunteer_urgency)}>
-                      {strongestRecommendation.volunteer_urgency || 'Not set'}
-                    </Badge>
+                  <div className="rounded-[1.7rem] bg-white px-5 py-4 text-right shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-[0.22em] text-moss">
+                      {getScoreLabel(Number(strongestRecommendation.score || 0))}
+                    </p>
+                    <p className="mt-2 text-4xl font-semibold text-pine">
+                      {Number(strongestRecommendation.score || 0).toFixed(2)}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">Score</p>
                   </div>
                 </div>
-                <div className="rounded-[1.4rem] bg-white/80 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                    People needed
-                  </p>
-                  <p className="mt-2 text-lg font-semibold text-pine">
-                    {strongestRecommendation.volunteers_currently_needed || 0}
-                  </p>
+
+                <div className="mt-6 rounded-[1.8rem] bg-white/70 p-5">
+                  <p className="text-sm font-semibold text-pine">Why it matches</p>
+                  <ul className="mt-3 space-y-2">
+                    {getMatchReasons(volunteer, strongestRecommendation).map((reason) => (
+                      <li key={reason} className="flex gap-3 text-sm text-slate-700">
+                        <span aria-hidden="true" className="mt-1 text-pine">
+                          ✦
+                        </span>
+                        <span>{reason}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="rounded-[1.4rem] bg-white/80 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                    Timing
-                  </p>
-                  <p className="mt-2 text-sm text-slate-700">
-                    {strongestRecommendation.availability_preference || 'Flexible timing'}
-                  </p>
-                </div>
-                <div className="rounded-[1.4rem] bg-white/80 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                    Screening
-                  </p>
-                  <div className="mt-2">
-                    <Badge
-                      tone={getBackgroundCheckTone(
-                        strongestRecommendation.background_check_required,
-                      )}
-                    >
-                      {strongestRecommendation.background_check_required
-                        ? 'Background check needed'
-                        : 'No background check'}
-                    </Badge>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-4">
+                  <div className="rounded-[1.4rem] bg-white/80 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      Urgency
+                    </p>
+                    <div className="mt-2">
+                      <Badge tone={getUrgencyTone(strongestRecommendation.volunteer_urgency)}>
+                        {strongestRecommendation.volunteer_urgency || 'Not set'}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="rounded-[1.4rem] bg-white/80 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      People needed
+                    </p>
+                    <p className="mt-2 text-lg font-semibold text-pine">
+                      {strongestRecommendation.volunteers_currently_needed || 0}
+                    </p>
+                  </div>
+                  <div className="rounded-[1.4rem] bg-white/80 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      Timing
+                    </p>
+                    <p className="mt-2 text-sm text-slate-700">
+                      {strongestRecommendation.availability_preference || 'Flexible timing'}
+                    </p>
+                  </div>
+                  <div className="rounded-[1.4rem] bg-white/80 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                      Screening
+                    </p>
+                    <div className="mt-2">
+                      <Badge
+                        tone={getBackgroundCheckTone(
+                          strongestRecommendation.background_check_required,
+                        )}
+                      >
+                        {strongestRecommendation.background_check_required
+                          ? 'Background check needed'
+                          : 'No background check'}
+                      </Badge>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </article>
+              </article>
+
+              <SuggestedVolunteerTeam
+                teamRecommendation={teamRecommendation}
+                anchorVolunteer={volunteer}
+              />
+            </div>
           )}
 
           <div className="grid gap-6 xl:grid-cols-2">
