@@ -392,11 +392,3 @@ app.get("/api/volunteers/:id/suggested-team", async (req, res) => {
 
 
 
-
-app.get("/api/continuity-notes", async (req, res) => {
-  res.json([]);
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
