@@ -35,33 +35,7 @@ function normalizeOrganization(row) {
   };
 }
 
-function buildTaskTitle(row) {
-  if (row.skills_needed?.length) {
-    return `${row.skills_needed[0]} support`;
-  }
 
-  return `${row.org_name || row.account_name || row.legal_name} volunteer need`;
-}
-
-function normalizeTask(row) {
-  const organization = normalizeOrganization(row);
-  const primarySkill = row.skills_needed?.[0] || "";
-
-  return {
-    id: `org-task-${row.id}`,
-    org_id: row.id,
-    task_title: buildTaskTitle(organization),
-    task_description: `Volunteer support needed for ${organization.org_name}.`,
-    skills_needed: row.skills_needed || [],
-    languages_needed: row.languages_needed || [],
-    availability_needed: row.availability_preference || "",
-    volunteers_currently_needed: row.volunteers_currently_needed || 1,
-    urgency: row.volunteer_urgency || "Medium",
-    location_type: row.city ? "In person" : "Remote",
-    background_check_required: row.background_check_required,
-    organization,
-  };
-}
 function availabilityBooleansToList(row) {
   const result = [];
 
@@ -86,7 +60,7 @@ function normalizeVolunteer(row) {
     neighbourhood: row.neighbourhood || "",
     languages_spoken: row.languages_spoken || [],
     skills: row.skills || [],
-    interests: row.cause_areas_of_interest || [],
+    cause_areas_of_interest: row.cause_areas_of_interest || [],
     availability:availability,
     hours_available_per_month: row.hours_available_per_month || 0,
     experience_level: row.prior_volunteer_experience || "None",

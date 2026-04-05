@@ -16,7 +16,6 @@ function App() {
         <Route path="/dashboard" element={<NonprofitDashboardPage />} />
         <Route path="/organizations/new" element={<OrganizationFormPage />} />
         <Route path="/tasks/new" element={<Navigate to="/organizations/new" replace />} />
-        <Route path="/matches" element={<VolunteerMatchPage />} />
         <Route path="/volunteers/new" element={<VolunteerIntakePage />} />
         <Route path="/volunteers/dashboard" element={<VolunteerProfilePage />} />
         <Route path="/volunteers/:id" element={<VolunteerProfilePage />} />
